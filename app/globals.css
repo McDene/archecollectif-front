@@ -2,20 +2,31 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: "Avenir Black";
+  src: url("/fonts/AvenirBlack.woff2") format("woff2"),
+    url("/fonts/AvenirBlack.woff") format("woff");
+  font-weight: bold;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Avenir Regular";
+  src: url("/fonts/AvenirRegular.woff2") format("woff2"),
+    url("/fonts/AvenirRegular.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
+}
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --font-avenir-black: "Avenir Black", sans-serif;
+  --font-avenir-regular: "Avenir Regular", sans-serif;
 }
 
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-avenir-regular, Arial, sans-serif);
 }
