@@ -1,51 +1,17 @@
-// Home.tsx
-"use client";
-
-import { FC } from "react";
-import Header from "../components/Header";
 import Hero from "../components/Hero";
-import ProjectsSection from "../components/Project";
-import Teams from "../components/Teams";
-import Events from "../components/Events";
-import Footer from "../components/Footer";
+import Header from "../components/Header";
+// import About from "../components/About";
+import { fetchAPI } from "../lib/fetchAPI";
 
-const Home: FC = () => {
-  const projectsData = [
-    {
-      year: "2024",
-      name: "Projet A",
-      images: [
-        "/images/1.jpg",
-        "/images/2.jpg",
-        "/images/3.jpg",
-        "/images/4.jpg",
-      ],
-      pdf: "/pdfs/projetA.pdf",
-    },
-    {
-      year: "2024",
-      name: "Projet B",
-      images: ["/images/1.jpg", "/images/2.jpg", "/images/3.jpg"],
-      pdf: "/pdfs/projetC.pdf",
-    },
-    {
-      year: "2023",
-      name: "Projet C",
-      images: ["/images/1.jpg", "/images/2.jpg", "/images/4.jpg"],
-      pdf: "/pdfs/projetB.pdf",
-    },
-  ];
+export default async function HomePage() {
+  const heroData = await fetchAPI("/api/Video?populate=Video");
+  const videoUrl = heroData?.data?.Video?.url || "";
 
   return (
     <>
       <Header />
-      <Hero />
-      <ProjectsSection projectsData={projectsData} />
-      <Teams />
-      <Events />
-      <Footer />
+      <Hero videoUrl={videoUrl} />
+      {/* <About /> */}
     </>
   );
-};
-
-export default Home;
+}

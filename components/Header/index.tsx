@@ -2,59 +2,58 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import Image from "next/image";
-import { motion } from "framer-motion";
+import { AiOutlineMenu, AiOutlineClose } from "react-icons/ai";
 
 export default function Navbar() {
-  const [showNavbar, setShowNavbar] = useState(true);
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [lastScrollY, setLastScrollY] = useState(0);
+  const [isFixed, setIsFixed] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false); // État pour gérer le menu mobile
+  const headerHeight = 80;
 
+  // Gestion de la position du header
   useEffect(() => {
     const handleScroll = () => {
-      const currentScrollY = window.scrollY;
+      const scrollY = window.scrollY;
 
-      if (currentScrollY > 20) {
-        setIsScrolled(true); // Activer le fond blanc après 50px
+      if (scrollY >= window.innerHeight - headerHeight) {
+        setIsFixed(true);
       } else {
-        setIsScrolled(false); // Rendre transparent en haut de la page
+        setIsFixed(false);
       }
-
-      if (currentScrollY < 20 || currentScrollY < lastScrollY) {
-        setShowNavbar(true); // Affiche le header en haut de page ou si on remonte
-      } else if (currentScrollY > 20 && currentScrollY > lastScrollY) {
-        setShowNavbar(false); // Cache le header si on descend après 80px
-      }
-
-      setLastScrollY(currentScrollY);
     };
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [lastScrollY]);
+  }, []);
+
+  // Empêche le scroll quand le menu est ouvert
+  useEffect(() => {
+    if (isMenuOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, [isMenuOpen]);
 
   return (
-    <motion.header
-      initial={{ y: 0 }}
-      animate={{ y: showNavbar ? 0 : -150 }}
-      transition={{ duration: 0.5 }}
-      className={`fixed top-0 left-0 right-0 z-50 ${
-        isScrolled ? "bg-gray-100 " : "bg-transparent"
-      } py-4 px-8 transition-all duration-300`}
+    <header
+      className={`${
+        isFixed ? "fixed top-0" : "absolute bottom-0"
+      } left-0 right-0 z-50 bg-myblue py-4 px-8 shadow-md transition-all duration-300`}
     >
       <div className="max-w-7xl mx-auto flex justify-between items-center">
         {/* Logo */}
-        <div className="flex items-center">
-          <Image
-            src="/images/RougeChaud.png"
-            alt="Logo"
-            width={50}
-            height={50}
-          />
+        <div className="flex items-center text-2xl text-myred font-avenirRegular">
+          <Link href="/">
+            <span className="font-avenirBlack">L&apos;ARCH</span> Collectif
+          </Link>
         </div>
 
-        {/* Navigation */}
-        <nav className="flex-grow flex justify-center space-x-8 text-2xl text-myred font-avenirBlack">
+        {/* Menu pour Desktop */}
+        <nav className="hidden md:flex space-x-8 text-xl text-myred font-avenirRegular">
           <Link href="/" className="hover:underline">
             Home
           </Link>
@@ -71,7 +70,75 @@ export default function Navbar() {
             Contact
           </Link>
         </nav>
+
+        {/* Menu burger pour Mobile */}
+        <div className="md:hidden">
+          <button
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            className="text-myred text-2xl"
+            aria-label="Toggle navigation menu"
+          >
+            {isMenuOpen ? <AiOutlineClose /> : <AiOutlineMenu />}
+          </button>
+        </div>
       </div>
-    </motion.header>
+
+      {/* Navigation mobile */}
+      {isMenuOpen && (
+        <div className="md:hidden bg-myblue text-myred fixed inset-0 flex flex-col items-center justify-center space-y-6 text-xl z-50">
+          {/* Bouton Close en haut à droite */}
+          <button
+            onClick={() => setIsMenuOpen(false)}
+            className="absolute top-4 right-4 text-myred text-3xl"
+            aria-label="Close menu"
+          >
+            <AiOutlineClose />
+          </button>
+
+          {/* Liens du menu */}
+          <div className="flex items-center text-4xl text-myred font-avenirRegular">
+            <Link href="/">
+              <span className="font-avenirBlack">L&apos;ARCH</span> Collectif
+            </Link>
+          </div>
+
+          <Link
+            href="/"
+            className="hover:underline"
+            onClick={() => setIsMenuOpen(false)}
+          >
+            Home
+          </Link>
+          <Link
+            href="/projects"
+            className="hover:underline"
+            onClick={() => setIsMenuOpen(false)}
+          >
+            Nos projets
+          </Link>
+          <Link
+            href="/team"
+            className="hover:underline"
+            onClick={() => setIsMenuOpen(false)}
+          >
+            L&apos;équipe
+          </Link>
+          <Link
+            href="/news"
+            className="hover:underline"
+            onClick={() => setIsMenuOpen(false)}
+          >
+            Nos actualités
+          </Link>
+          <Link
+            href="/contact"
+            className="hover:underline"
+            onClick={() => setIsMenuOpen(false)}
+          >
+            Contact
+          </Link>
+        </div>
+      )}
+    </header>
   );
 }
