@@ -11,6 +11,7 @@ export default function Hero({ videoUrl }: HeroProps) {
           muted
           loop
           className="absolute top-0 left-0 w-full h-full object-cover"
+          playsInline
         >
           <source src={videoUrl} type="video/mp4" />
           Votre navigateur ne supporte pas la lecture des vidéos.
