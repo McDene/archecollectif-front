@@ -4,19 +4,37 @@ import About from "../components/About";
 import { fetchAPI } from "../lib/fetchAPI";
 
 export default async function HomePage() {
-  const heroData = await fetchAPI("/api/Video?populate=Video");
-  const videoUrl = heroData?.data?.Video?.url || "";
+  try {
+    const [heroData, aboutData] = await Promise.all([
+      fetchAPI("/api/Video?populate=Video").catch((err) => {
+        console.error("Error fetching hero data:", err);
+        return null;
+      }),
+      fetchAPI("/api/About").catch((err) => {
+        console.error("Error fetching about data:", err);
+        return null;
+      }),
+    ]);
 
-  const aboutData = await fetchAPI("/api/About");
-  const titleAbout = aboutData?.data?.Title || "";
-  const textAbout = aboutData?.data?.Text || "";
+    const videoUrl = heroData?.data?.Video?.url || "";
+    const titleAbout = aboutData?.data?.Title || "Default Title";
+    const textAbout = aboutData?.data?.Text || "Default Text";
 
-  console.log("Rendering page...");
-  return (
-    <>
-      <Header />
-      <Hero videoUrl={videoUrl} />
-      <About titleAbout={titleAbout} textAbout={textAbout} />
-    </>
-  );
+    console.log("Rendering page...");
+    return (
+      <>
+        <Header />
+        <Hero videoUrl={videoUrl} />
+        <About titleAbout={titleAbout} textAbout={textAbout} />
+      </>
+    );
+  } catch (err) {
+    console.error("Unexpected error:", err);
+    return (
+      <>
+        <Header />
+        <h1>Something went wrong</h1>
+      </>
+    );
+  }
 }
