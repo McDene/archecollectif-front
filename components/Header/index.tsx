@@ -57,7 +57,7 @@ export default function Navbar() {
           <Link href="/" className="hover:underline">
             Home
           </Link>
-          <Link href="/projects" className="hover:underline">
+          <Link href="#projets" className="hover:underline">
             Nos projets
           </Link>
           <Link href="/team" className="hover:underline">

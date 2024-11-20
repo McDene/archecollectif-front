@@ -1,6 +1,7 @@
 "use client";
 
 import { FC, useState } from "react";
+import { AiFillMinusCircle, AiFillPlusCircle } from "react-icons/ai";
 
 interface Project {
   id: number;
@@ -13,7 +14,7 @@ interface ProjectsSectionProps {
 }
 
 const ProjectsSection: FC<ProjectsSectionProps> = ({ projects }) => {
-  const [selectedYear, setSelectedYear] = useState<string | null>(null);
+  const [selectedYearIndex, setSelectedYearIndex] = useState(0); // Par défaut, sélectionne la première année
   const [selectedProject, setSelectedProject] = useState<number | null>(null);
 
   // Récupérer les années uniques
@@ -21,13 +22,34 @@ const ProjectsSection: FC<ProjectsSectionProps> = ({ projects }) => {
     new Set(projects.map((project) => project.date.split("-")[0]))
   );
 
-  // Projets filtrés par année
-  const filteredProjects = selectedYear
-    ? projects.filter((project) => project.date.startsWith(selectedYear))
-    : projects;
+  // Gestion des boutons "Monté" et "Descendre"
+  const handleScrollUp = () => {
+    setSelectedYearIndex(
+      (prev) => (prev - 1 + uniqueYears.length) % uniqueYears.length
+    );
+  };
+
+  const handleScrollDown = () => {
+    setSelectedYearIndex((prev) => (prev + 1) % uniqueYears.length);
+  };
+
+  // Calculer les années visibles (3 éléments avec celui du milieu sélectionné)
+  const visibleYears = [
+    uniqueYears[
+      (selectedYearIndex - 1 + uniqueYears.length) % uniqueYears.length
+    ],
+    uniqueYears[selectedYearIndex],
+    uniqueYears[(selectedYearIndex + 1) % uniqueYears.length],
+  ];
+
+  // Projets filtrés par l'année sélectionnée
+  const selectedYear = uniqueYears[selectedYearIndex];
+  const filteredProjects = projects.filter((project) =>
+    project.date.startsWith(selectedYear)
+  );
 
   return (
-    <section className=" bg-gray-50 py-20 md:py-28 h-lvh">
+    <section className="bg-gray-50 py-20 md:py-28 h-lvh">
       <div className="max-w-7xl mx-auto px-8">
         <h1 className="text-6xl font-avenirBlack text-start text-myred pb-12">
           Nos Projets
@@ -35,36 +57,57 @@ const ProjectsSection: FC<ProjectsSectionProps> = ({ projects }) => {
 
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Filtres */}
-          <div className="col-span-1">
-            {/* Filtre Année */}
-            <ul className="space-y-2">
-              {uniqueYears.map((year) => (
-                <li key={year}>
-                  <button
-                    className={`w-full text-left py-2 px-4 rounded-lg ${
-                      selectedYear === year
-                        ? "bg-myblue text-white"
-                        : "bg-gray-200 text-gray-800 hover:bg-myblue hover:text-white"
-                    }`}
-                    onClick={() =>
-                      setSelectedYear(selectedYear === year ? null : year)
-                    }
-                  >
-                    {year}
-                  </button>
-                </li>
-              ))}
-            </ul>
+          <div className="col-span-1 flex flex-col">
+            {/* Bouton "Monté" */}
+            <div className="flex items-center justify-between">
+              <button
+                onClick={handleScrollDown}
+                className="text-center p-2 w-8 h-8 flex items-center justify-center bg-gray-400 text-white rounded-full shadow hover:bg-myblue"
+              >
+                <AiFillMinusCircle size={24} />
+              </button>
 
-            <br />
+              {/* Liste des années */}
+              <ul className=" space-y-2 flex flex-col justify-center items-center h-36">
+                {visibleYears.map((year) => (
+                  <li key={year}>
+                    <button
+                      className={`w-full px-4 rounded-lg ${
+                        year === selectedYear
+                          ? " text-myblue font-avenirBlack text-4xl"
+                          : " text-gray-400 font-avenirRegular hover:underline"
+                      }`}
+                      onClick={() =>
+                        setSelectedYearIndex(uniqueYears.indexOf(year))
+                      }
+                    >
+                      {year}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+
+              {/* Bouton "Descendre" */}
+
+              <button
+                onClick={handleScrollUp}
+                className="text-center p-2 w-8 h-8 flex items-center justify-center bg-gray-400 text-white rounded-full shadow hover:bg-myblue"
+              >
+                <AiFillPlusCircle size={24} />
+              </button>
+            </div>
+
+            <div className="block h-[2px] w-full bg-myblue my-6" />
+
+            {/* Liste des projets pour l'année sélectionnée */}
             <ul className="space-y-2">
               {filteredProjects.map((project) => (
                 <li key={project.id}>
                   <button
-                    className={`w-full text-left py-1 px-4 rounded-lg text-2xl font-avenirBlack ${
+                    className={`text-left py-1 px-4 rounded-lg text-3xl font-avenirBlack ${
                       selectedProject === project.id
-                        ? "text-myred"
-                        : " text-myred  hover:underline"
+                        ? "text-myred underline"
+                        : "text-gray-400 hover:underline"
                     }`}
                     onClick={() =>
                       setSelectedProject(
@@ -77,6 +120,8 @@ const ProjectsSection: FC<ProjectsSectionProps> = ({ projects }) => {
                 </li>
               ))}
             </ul>
+            <div className="block h-[2px] w-full bg-myblue my-6" />
+            <p className="text-gray-400">Télécharger le PDF</p>
           </div>
 
           {/* Contenu */}
