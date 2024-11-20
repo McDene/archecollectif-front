@@ -36,3 +36,7 @@ The easiest way to deploy your Next.js app is to use the [Vercel Platform](https
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
 
 http://localhost:1337/api/projects?populate[PDF]=_&populate[Image]=_
+
+http://localhost:1337/api/projects?populate[PDF]&populate=Image
+
+http://localhost:1337/api/projects?populate[PDF]=_&populate[Image]=_

@@ -2,6 +2,7 @@ import Hero from "../components/Hero";
 import Header from "../components/Header";
 import About from "../components/About";
 import Project from "../components/Project";
+import Team from "../components/Teams";
 import { fetchAPI } from "../lib/fetchAPI";
 
 export default async function HomePage() {
@@ -46,6 +47,7 @@ export default async function HomePage() {
         <Hero videoUrl={videoUrl} />
         <About titleAbout={titleAbout} textAbout={textAbout} />
         <Project projects={projects} />
+        <Team />
       </>
     );
   } catch (err) {

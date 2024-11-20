@@ -7,7 +7,7 @@ import { AiOutlineMenu, AiOutlineClose } from "react-icons/ai";
 export default function Navbar() {
   const [isFixed, setIsFixed] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false); // État pour gérer le menu mobile
-  const headerHeight = 80;
+  const headerHeight = 64;
 
   // Gestion de la position du header
   useEffect(() => {
@@ -42,9 +42,9 @@ export default function Navbar() {
     <header
       className={`${
         isFixed ? "fixed top-0" : "absolute bottom-0"
-      } left-0 right-0 z-50 bg-myblue py-4 px-8 transition-all duration-300`}
+      } left-0 right-0 z-50 bg-myblue py-4 px-8 `}
     >
-      <div className="max-w-7xl mx-auto flex justify-between items-center">
+      <div className="max-w-7xl mx-auto flex justify-between items-center px-4">
         {/* Logo */}
         <div className="flex items-center text-2xl text-myred font-avenirRegular">
           <Link href="/">
@@ -60,13 +60,13 @@ export default function Navbar() {
           <Link href="#projets" className="hover:underline">
             Nos projets
           </Link>
-          <Link href="/team" className="hover:underline">
+          <Link href="#team" className="hover:underline">
             L&apos;équipe
           </Link>
-          <Link href="/news" className="hover:underline">
+          <Link href="#news" className="hover:underline">
             Nos actualités
           </Link>
-          <Link href="/contact" className="hover:underline">
+          <Link href="#contact" className="hover:underline">
             Contact
           </Link>
         </nav>

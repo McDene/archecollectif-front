@@ -30,3 +30,13 @@ body {
   background: var(--background);
   font-family: var(--font-avenir-regular, Arial, sans-serif);
 }
+
+/* CSS pour les puces de pagination */
+.custom-pagination .swiper-pagination-bullet {
+  background-color: #3333;
+  opacity: 1;
+}
+
+.custom-pagination .swiper-pagination-bullet-active {
+  background-color: #223c60;
+}

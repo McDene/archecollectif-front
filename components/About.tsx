@@ -5,7 +5,7 @@ type AboutProps = {
 
 export default function About({ titleAbout, textAbout }: AboutProps) {
   return (
-    <section className="bg-myblue py-20 md:py-28 h-lvh">
+    <section className="bg-myblue py-20 md:py-28 lg:h-lvh">
       <div className="max-w-7xl mx-auto flex flex-col text-gray-800 px-4">
         {/* Titre principal */}
         <h1 className="text-5xl sm:text-6xl md:text-9xl font-avenirBlack pb-12 md:pb-24 text-center md:text-left">

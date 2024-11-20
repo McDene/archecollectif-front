@@ -41,7 +41,7 @@ export default function RootLayout({
   return (
     <html lang="fr">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${avenirBlack.variable} ${avenirRegular.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${avenirBlack.variable} ${avenirRegular.variable} antialiased h-full `}
       >
         {children}
       </body>
