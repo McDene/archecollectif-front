@@ -27,9 +27,9 @@ const ProjectsSection: FC<ProjectsSectionProps> = ({ projects }) => {
     : projects;
 
   return (
-    <section className=" bg-gray-100 py-20 md:py-28 h-lvh">
+    <section className=" bg-gray-50 py-20 md:py-28 h-lvh">
       <div className="max-w-7xl mx-auto px-8">
-        <h1 className="text-6xl font-avenirBlack text-center text-myred pb-12">
+        <h1 className="text-6xl font-avenirBlack text-start text-myred pb-12">
           Nos Projets
         </h1>
 
@@ -61,10 +61,10 @@ const ProjectsSection: FC<ProjectsSectionProps> = ({ projects }) => {
               {filteredProjects.map((project) => (
                 <li key={project.id}>
                   <button
-                    className={`w-full text-left py-2 px-4 rounded-lg ${
+                    className={`w-full text-left py-1 px-4 rounded-lg text-2xl font-avenirBlack ${
                       selectedProject === project.id
-                        ? "bg-myblue text-white"
-                        : "bg-gray-200 text-gray-800 hover:bg-myblue hover:text-white"
+                        ? "text-myred"
+                        : " text-myred  hover:underline"
                     }`}
                     onClick={() =>
                       setSelectedProject(

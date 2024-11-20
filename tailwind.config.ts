@@ -17,6 +17,9 @@ const config: Config = {
         avenirBlack: "var(--font-avenir-black)",
         avenirRegular: "var(--font-avenir-regular)",
       },
+      height: {
+        "screen-dvh": "100dvh",
+      },
     },
   },
   plugins: [daisyui],
