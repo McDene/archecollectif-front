@@ -42,9 +42,9 @@ export default function Navbar() {
     <header
       className={`${
         isFixed ? "fixed top-0" : "absolute bottom-0"
-      } left-0 right-0 z-50 bg-myblue py-4 px-8 `}
+      } left-0 right-0 z-50 bg-myblue py-4 shadow `}
     >
-      <div className="max-w-7xl mx-auto flex justify-between items-center px-4">
+      <div className="max-w-7xl mx-auto flex justify-between items-center px-4 ">
         {/* Logo */}
         <div className="flex items-center text-2xl text-myred font-avenirRegular">
           <Link href="/">
@@ -61,7 +61,7 @@ export default function Navbar() {
             projets
           </Link>
           <Link href="#team" className="hover:underline">
-            L&apos;équipe
+            équipe
           </Link>
           <Link href="#news" className="hover:underline">
             actualités

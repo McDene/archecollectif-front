@@ -91,69 +91,110 @@ const ProjectsSection: FC<ProjectsSectionProps> = ({ projects }) => {
   return (
     <section className="bg-gray-50 py-20 md:py-28 min-h-lvh">
       <div className="max-w-7xl mx-auto px-4">
-        {/* <h1 className="text-5xl md:text-8xl font-avenirBlack text-center text-myblue pb-10 md:pb-16">
+        <h1 className="text-5xl md:text-8xl block lg:hidden font-avenirBlack text-center text-myblue pb-10 md:pb-16">
           Nos Projets
-        </h1> */}
+        </h1>
 
         <div className="flex flex-col lg:grid lg:grid-cols-4 gap-8">
           {/* Filtres */}
           <div className="col-span-1 flex flex-col">
-            <div className="flex items-center justify-between">
-              <button onClick={handleScrollDown}>
-                <AiFillMinusCircle
-                  className="text-gray-400 hover:text-myred"
-                  size={30}
-                />
-              </button>
+            <div className="block lg:hidden">
+              {/* Années */}
+              <select
+                className="w-full p-2 mb-4 border bg-gray-50 border-gray-200 rounded-xl focus:outline-none"
+                value={selectedYear}
+                onChange={(e) =>
+                  setSelectedYearIndex(uniqueYears.indexOf(e.target.value))
+                }
+              >
+                {uniqueYears.map((year) => (
+                  <option key={year} value={year}>
+                    {year}
+                  </option>
+                ))}
+              </select>
 
-              <ul className="space-y-2 flex flex-col justify-center items-center h-36">
-                {visibleYears.map((year) => (
-                  <li key={year}>
+              {/* Projets */}
+              <select
+                className="w-full p-2 mb-4 border bg-gray-50 border-gray-200 rounded-xl focus:outline-none"
+                value={selectedProject || ""}
+                onChange={(e) => {
+                  const projectId = parseInt(e.target.value, 10);
+                  setSelectedProject(projectId);
+                  loadProjectImages(projectId);
+                }}
+              >
+                <option value="" disabled>
+                  Sélectionnez un projet
+                </option>
+                {filteredProjects.map((project) => (
+                  <option key={project.id} value={project.id}>
+                    {project.title}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* filtre mode desktop */}
+            <div className="hidden lg:block">
+              <div className="flex items-center">
+                <div className="flex flex-col">
+                  <button className="mb-3" onClick={handleScrollDown}>
+                    <AiFillMinusCircle
+                      className="text-gray-400 hover:text-myred"
+                      size={30}
+                    />
+                  </button>
+                  <button className="mb-3" onClick={handleScrollUp}>
+                    <AiFillPlusCircle
+                      className="text-gray-400 hover:text-myred"
+                      size={30}
+                    />
+                  </button>
+                </div>
+
+                <ul className="space-y-2 flex flex-col justify-center items-center h-36">
+                  {visibleYears.map((year) => (
+                    <li key={year}>
+                      <button
+                        className={`w-full px-6 rounded-lg ${
+                          year === selectedYear
+                            ? "text-myred font-avenirBlack text-4xl"
+                            : "text-gray-400 font-avenirRegular hover:underline"
+                        }`}
+                        onClick={() =>
+                          setSelectedYearIndex(uniqueYears.indexOf(year))
+                        }
+                      >
+                        {year}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <div className="block h-[2px] w-full bg-myblue my-6" />
+
+              <ul className="space-y-2">
+                {filteredProjects.map((project) => (
+                  <li key={project.id}>
                     <button
-                      className={`w-full px-4 rounded-lg ${
-                        year === selectedYear
-                          ? "text-myred font-avenirBlack text-4xl"
-                          : "text-gray-400 font-avenirRegular hover:underline"
+                      className={`text-left py-1 rounded-lg text-3xl font-avenirBlack ${
+                        selectedProject === project.id
+                          ? "text-myred underline"
+                          : "text-gray-400 hover:underline"
                       }`}
-                      onClick={() =>
-                        setSelectedYearIndex(uniqueYears.indexOf(year))
-                      }
+                      onClick={() => {
+                        setSelectedProject(project.id);
+                        loadProjectImages(project.id);
+                      }}
                     >
-                      {year}
+                      {project.title}
                     </button>
                   </li>
                 ))}
               </ul>
-
-              <button onClick={handleScrollUp}>
-                <AiFillPlusCircle
-                  className="text-gray-400 hover:text-myred"
-                  size={30}
-                />
-              </button>
             </div>
-
-            <div className="block h-[2px] w-full bg-myblue my-6" />
-
-            <ul className="space-y-2">
-              {filteredProjects.map((project) => (
-                <li key={project.id}>
-                  <button
-                    className={`text-left py-1 px-4 rounded-lg text-3xl font-avenirBlack ${
-                      selectedProject === project.id
-                        ? "text-myred underline"
-                        : "text-gray-400 hover:underline"
-                    }`}
-                    onClick={() => {
-                      setSelectedProject(project.id);
-                      loadProjectImages(project.id);
-                    }}
-                  >
-                    {project.title}
-                  </button>
-                </li>
-              ))}
-            </ul>
           </div>
 
           {/* Contenu */}
