@@ -3,34 +3,22 @@ import Header from "../components/Header";
 import About from "../components/About";
 import Project from "../components/Project";
 import Team from "../components/Teams";
-import { fetchAPI } from "../lib/fetchAPI";
+// import { fetchAPI } from "../lib/fetchAPI";
 
 export default async function HomePage() {
   try {
-    // Récupération parallèle des données
     const [heroData, aboutData, projectData] = await Promise.all([
-      fetchAPI("/api/Video?populate=Video").catch((err) => {
-        console.error("Error fetching hero data:", err);
-        return null;
-      }),
-      fetchAPI("/api/About").catch((err) => {
-        console.error("Error fetching about data:", err);
-        return null;
-      }),
-      fetchAPI("/api/projects").catch((err) => {
-        console.error("Error fetching project data:", err);
-        return null;
-      }),
+      fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/Video?populate=Video`, {
+        next: { revalidate: 0 }, // Pas de cache
+      }).then((res) => res.json()),
+      fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/About`, {
+        next: { revalidate: 0 }, // Pas de cache
+      }).then((res) => res.json()),
+      fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/projects`, {
+        next: { revalidate: 0 }, // Pas de cache
+      }).then((res) => res.json()),
     ]);
 
-    // Extraction des données Hero
-    const videoUrl = heroData?.data?.Video?.url || "";
-
-    // Extraction des données About
-    const titleAbout = aboutData?.data?.Title || "Default Title";
-    const textAbout = aboutData?.data?.Text || "Default Text";
-
-    // Extraction des données Project
     const projects =
       projectData?.data.map(
         (project: { id: number; Title: string; Date: string }) => ({
@@ -40,7 +28,10 @@ export default async function HomePage() {
         })
       ) || [];
 
-    console.log("Rendering page...");
+    const videoUrl = heroData?.data?.Video?.url || "";
+    const titleAbout = aboutData?.data?.Title || "Default Title";
+    const textAbout = aboutData?.data?.Text || "Default Text";
+
     return (
       <>
         <Header />
@@ -50,12 +41,13 @@ export default async function HomePage() {
         <Team />
       </>
     );
-  } catch (err) {
-    console.error("Unexpected error:", err);
+  } catch (error) {
+    console.error("Error fetching data:", error);
+
     return (
       <>
         <Header />
-        <h1>Something went wrong</h1>
+        <h1>Something went wrong while fetching data.</h1>
       </>
     );
   }
