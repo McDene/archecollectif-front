@@ -9,14 +9,21 @@ export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false); // État pour gérer le menu mobile
   const headerHeight = 64;
 
-  // Gestion de la position du header
+  // Gestion de la position du header pour les écrans md et plus
   useEffect(() => {
     const handleScroll = () => {
-      const scrollY = window.scrollY;
+      const isMdOrLarger = window.matchMedia("(min-width: 768px)").matches;
 
-      if (scrollY >= window.innerHeight - headerHeight) {
-        setIsFixed(true);
+      if (isMdOrLarger) {
+        const scrollY = window.scrollY;
+
+        if (scrollY >= window.innerHeight - headerHeight) {
+          setIsFixed(true);
+        } else {
+          setIsFixed(false);
+        }
       } else {
+        // Désactiver l'effet isFixed pour les écrans inférieurs à md
         setIsFixed(false);
       }
     };
@@ -41,10 +48,10 @@ export default function Navbar() {
   return (
     <header
       className={`${
-        isFixed ? "fixed top-0" : "absolute bottom-0"
-      } left-0 right-0 z-50 bg-myblue py-4 shadow `}
+        isFixed ? "fixed top-0" : "md:absolute md:bottom-0 fixed "
+      } left-0 right-0 z-50 bg-myblue py-4 shadow`}
     >
-      <div className="max-w-7xl mx-auto flex justify-between items-center px-4 ">
+      <div className="max-w-7xl mx-auto flex justify-between items-center px-4">
         {/* Logo */}
         <div className="flex items-center text-2xl text-myred font-avenirRegular">
           <Link href="/">

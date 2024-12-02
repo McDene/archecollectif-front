@@ -1,7 +1,7 @@
 "use client";
 
 import { FC, useState, useEffect } from "react";
-import { AiFillMinusCircle, AiFillPlusCircle } from "react-icons/ai";
+import { AiFillCaretDown, AiFillCaretUp } from "react-icons/ai";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { EffectCoverflow, Pagination, Autoplay } from "swiper/modules";
 import "swiper/css";
@@ -140,15 +140,15 @@ const ProjectsSection: FC<ProjectsSectionProps> = ({ projects }) => {
               <div className="flex items-center">
                 <div className="flex flex-col">
                   <button className="mb-3" onClick={handleScrollDown}>
-                    <AiFillMinusCircle
+                    <AiFillCaretUp
                       className="text-gray-400 hover:text-myred"
-                      size={30}
+                      size={25}
                     />
                   </button>
                   <button className="mb-3" onClick={handleScrollUp}>
-                    <AiFillPlusCircle
+                    <AiFillCaretDown
                       className="text-gray-400 hover:text-myred"
-                      size={30}
+                      size={25}
                     />
                   </button>
                 </div>
