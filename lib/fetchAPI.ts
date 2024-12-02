@@ -9,7 +9,6 @@ export const fetchAPI = async (endpoint: string) => {
     const response = await axios.get(`${API_URL}${endpoint}`, {
       headers: {
         Accept: "application/json",
-        "Cache-Control": "no-cache",
       },
     });
     console.log("API Response:", response.data);

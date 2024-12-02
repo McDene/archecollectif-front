@@ -67,17 +67,16 @@ const ProjectsSection: FC<ProjectsSectionProps> = ({ projects }) => {
       // Extraction des URLs des images
       const images =
         data?.data?.[0]?.Image?.map((img: { url: string }) => img.url) || [];
-      projectCache[projectId] = images; // Mise en cache des résultats localement
+      projectCache[projectId] = images;
       setProjectImages(images);
     } catch (error) {
       console.error("Error fetching project images:", error);
-      setProjectImages([]); // Réinitialisation en cas d'erreur
+      setProjectImages([]);
     } finally {
       setLoading(false);
     }
   };
 
-  // Charger les images initiales du premier projet de l'année sélectionnée
   useEffect(() => {
     if (filteredProjects.length > 0) {
       const firstProject = filteredProjects[0];
