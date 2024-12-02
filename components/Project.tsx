@@ -45,21 +45,33 @@ const ProjectsSection: FC<ProjectsSectionProps> = ({ projects }) => {
     project.date.startsWith(selectedYear)
   );
 
+  const projectCache: Record<number, string[]> = {};
+
   // Charger les images d'un projet
   const loadProjectImages = async (projectId: number) => {
     setLoading(true);
+
+    // Si les images sont déjà en cache local, on les utilise
+    if (projectCache[projectId]) {
+      setProjectImages(projectCache[projectId]);
+      setLoading(false);
+      return;
+    }
+
     try {
+      // Appel API avec gestion du cache et invalidation
       const data = await fetchAPI(
         `/api/projects?filters[id][$eq]=${projectId}&populate[Image]=*`
       );
 
-      const images = data?.data[0]?.Image.map(
-        (img: { url: string }) => img.url
-      );
-      setProjectImages(images || []);
+      // Extraction des URLs des images
+      const images =
+        data?.data?.[0]?.Image?.map((img: { url: string }) => img.url) || [];
+      projectCache[projectId] = images; // Mise en cache des résultats localement
+      setProjectImages(images);
     } catch (error) {
       console.error("Error fetching project images:", error);
-      setProjectImages([]);
+      setProjectImages([]); // Réinitialisation en cas d'erreur
     } finally {
       setLoading(false);
     }
