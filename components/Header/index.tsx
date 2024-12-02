@@ -48,26 +48,26 @@ export default function Navbar() {
         {/* Logo */}
         <div className="flex items-center text-2xl text-myred font-avenirRegular">
           <Link href="/">
-            <span className="font-avenirBlack">L&apos;ARCH</span> Collectif
+            <span className="font-avenirBlack">L&apos;ARCH</span> collectif
           </Link>
         </div>
 
         {/* Menu pour Desktop */}
         <nav className="hidden md:flex space-x-8 text-xl text-myred font-avenirRegular">
           <Link href="/" className="hover:underline">
-            Home
+            home
           </Link>
           <Link href="#projets" className="hover:underline">
-            Nos projets
+            projets
           </Link>
           <Link href="#team" className="hover:underline">
             L&apos;équipe
           </Link>
           <Link href="#news" className="hover:underline">
-            Nos actualités
+            actualités
           </Link>
           <Link href="#contact" className="hover:underline">
-            Contact
+            contact
           </Link>
         </nav>
 

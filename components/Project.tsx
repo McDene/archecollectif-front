@@ -50,8 +50,9 @@ const ProjectsSection: FC<ProjectsSectionProps> = ({ projects }) => {
     setLoading(true);
     try {
       const data = await fetchAPI(
-        `/api/projects?filters[id][$eq]=${projectId}&populate[Image]=*`
+        `/api/projects?filters[id][$eq]=${projectId}&populate[Image]=*&timestamp=${Date.now()}`
       );
+
       const images = data?.data[0]?.Image.map(
         (img: { url: string }) => img.url
       );
@@ -90,9 +91,9 @@ const ProjectsSection: FC<ProjectsSectionProps> = ({ projects }) => {
   return (
     <section className="bg-gray-50 py-20 md:py-28 min-h-lvh">
       <div className="max-w-7xl mx-auto px-4">
-        <h1 className="text-5xl md:text-8xl font-avenirBlack text-center text-myblue pb-10 md:pb-16">
+        {/* <h1 className="text-5xl md:text-8xl font-avenirBlack text-center text-myblue pb-10 md:pb-16">
           Nos Projets
-        </h1>
+        </h1> */}
 
         <div className="flex flex-col lg:grid lg:grid-cols-4 gap-8">
           {/* Filtres */}
