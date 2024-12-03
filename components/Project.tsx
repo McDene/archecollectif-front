@@ -256,7 +256,10 @@ const ProjectsSection: FC<ProjectsSectionProps> = ({ projects }) => {
 
           {/* Content */}
           <div className="col-span-3">
-            {selectedProject === null && summaryImage && (
+            {loading && (
+              <div className="text-center h-[500px] md:h-[700px] bg-gray-100 rounded-3xl flex items-center justify-center"></div>
+            )}
+            {!loading && selectedProject === null && summaryImage && (
               <div className="mb-8">
                 <img
                   src={summaryImage}
@@ -265,8 +268,7 @@ const ProjectsSection: FC<ProjectsSectionProps> = ({ projects }) => {
                 />
               </div>
             )}
-
-            {selectedProject !== null && (
+            {!loading && selectedProject !== null && (
               <Swiper
                 grabCursor
                 centeredSlides
