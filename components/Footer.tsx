@@ -13,7 +13,7 @@ export default function Footer() {
               width={50}
               height={50}
             />
-            <h2 className="text-lg font-bold">Ld&apos;ARCH Collectif sarl</h2>
+            <h2 className="text-lg font-bold">L&apos;ARCH collectif sarl</h2>
           </div>
           <address className="not-italic leading-relaxed">
             Rue de la Condémine 20

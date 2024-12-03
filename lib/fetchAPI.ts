@@ -11,7 +11,7 @@ export const fetchAPI = async (endpoint: string) => {
         Accept: "application/json",
       },
     });
-    console.log("API Response:", response.data);
+    // console.log("API Response:", response.data);
     return response.data;
   } catch (error) {
     console.error("Erreur lors de l'appel API :", error);

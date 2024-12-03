@@ -40,3 +40,7 @@ body {
 .custom-pagination .swiper-pagination-bullet-active {
   background-color: #223c60;
 }
+
+.bg-title {
+  font-size: 220px;
+}

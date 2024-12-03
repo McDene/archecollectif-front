@@ -1,7 +1,7 @@
 "use client";
 
 import { FC, useState, useEffect } from "react";
-import { AiFillCaretDown, AiFillCaretUp } from "react-icons/ai";
+import { AiFillCaretDown, AiFillCaretUp, AiFillFilePdf } from "react-icons/ai";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { EffectCoverflow, Pagination, Autoplay } from "swiper/modules";
 import "swiper/css";
@@ -21,11 +21,14 @@ interface ProjectsSectionProps {
 
 const ProjectsSection: FC<ProjectsSectionProps> = ({ projects }) => {
   const [selectedYearIndex, setSelectedYearIndex] = useState(0);
-  const [selectedProject, setSelectedProject] = useState<number | null>(null);
+  const [selectedProject, setSelectedProject] = useState<number | null>(null); // Active project ID or null for summary
   const [projectImages, setProjectImages] = useState<string[]>([]);
+  const [summaryImage, setSummaryImage] = useState<string | null>(null);
+  const [summaryTitle, setSummaryTitle] = useState<string | null>(null);
+  const [projectPDF, setProjectPDF] = useState<string | null>(null);
+  const [projectNamePDF, setProjectNamePDF] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  // Récupérer les années uniques
   const uniqueYears = Array.from(
     new Set(projects.map((project) => project.date.split("-")[0]))
   );
@@ -39,56 +42,63 @@ const ProjectsSection: FC<ProjectsSectionProps> = ({ projects }) => {
     uniqueYears[(selectedYearIndex + 1) % uniqueYears.length],
   ];
 
-  // Projets filtrés par l'année sélectionnée
   const selectedYear = uniqueYears[selectedYearIndex];
   const filteredProjects = projects.filter((project) =>
     project.date.startsWith(selectedYear)
   );
 
-  const projectCache: Record<number, string[]> = {};
-
-  // Charger les images d'un projet
-  const loadProjectImages = async (projectId: number) => {
+  const loadSummaryData = async (year: string) => {
     setLoading(true);
-
-    // Si les images sont déjà en cache local, on les utilise
-    if (projectCache[projectId]) {
-      setProjectImages(projectCache[projectId]);
-      setLoading(false);
-      return;
-    }
-
     try {
-      // Appel API avec gestion du cache et invalidation
       const data = await fetchAPI(
-        `/api/projects?filters[id][$eq]=${projectId}&populate[Image]=*`
+        `/api/summary-projects?filters[Title][$eq]=Résumé de ${year}&populate=Image`
+      );
+      const imageUrl = data?.data?.[0]?.Image?.url || null;
+      const title = data?.data?.[0]?.Title || null;
+
+      setSummaryImage(imageUrl);
+      setSummaryTitle(title);
+    } catch (error) {
+      console.error("Error fetching summary data:", error);
+      setSummaryImage(null);
+      setSummaryTitle(null);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const loadProjectData = async (projectId: number) => {
+    setLoading(true);
+    try {
+      const data = await fetchAPI(
+        `/api/projects?filters[id][$eq]=${projectId}&populate[Image]=*&populate[PDF]=*`
       );
 
-      // Extraction des URLs des images
       const images =
         data?.data?.[0]?.Image?.map((img: { url: string }) => img.url) || [];
-      projectCache[projectId] = images;
+      const pdf = data?.data?.[0]?.PDF?.url || null;
+      const pdfName = data?.data?.[0]?.PDF_Name || null;
+
       setProjectImages(images);
+      setProjectPDF(pdf);
+      setProjectNamePDF(pdfName);
     } catch (error) {
-      console.error("Error fetching project images:", error);
+      console.error("Error fetching project data:", error);
       setProjectImages([]);
+      setProjectPDF(null);
+      setProjectNamePDF(null);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    if (filteredProjects.length > 0) {
-      const firstProject = filteredProjects[0];
-      setSelectedProject(firstProject.id);
-      loadProjectImages(firstProject.id);
-    } else {
-      setSelectedProject(null);
-      setProjectImages([]);
+    if (selectedYear) {
+      loadSummaryData(selectedYear);
+      setSelectedProject(null); // Reset to summary on year change
     }
   }, [selectedYear]);
 
-  // Gestion des boutons "Monté" et "Descendre"
   const handleScrollUp = () => {
     setSelectedYearIndex(
       (prev) => (prev - 1 + uniqueYears.length) % uniqueYears.length
@@ -107,118 +117,162 @@ const ProjectsSection: FC<ProjectsSectionProps> = ({ projects }) => {
         </h1>
 
         <div className="flex flex-col lg:grid lg:grid-cols-4 gap-8">
-          {/* Filtres */}
-          <div className="col-span-1 flex flex-col">
-            <div className="block lg:hidden">
-              {/* Années */}
-              <select
-                className="w-full p-2 mb-4 border bg-gray-50 border-gray-200 rounded-xl focus:outline-none"
-                value={selectedYear}
-                onChange={(e) =>
-                  setSelectedYearIndex(uniqueYears.indexOf(e.target.value))
-                }
-              >
-                {uniqueYears.map((year) => (
-                  <option key={year} value={year}>
-                    {year}
-                  </option>
-                ))}
-              </select>
+          {/* Sidebar */}
+          <div className="col-span-1 flex flex-col justify-between">
+            <div>
+              {/* Version mobile */}
+              <div className="block lg:hidden">
+                {/* Années */}
+                <select
+                  className="w-full p-2 mb-4 border bg-gray-50 border-gray-200 rounded-xl focus:outline-none"
+                  value={selectedYear}
+                  onChange={(e) =>
+                    setSelectedYearIndex(uniqueYears.indexOf(e.target.value))
+                  }
+                >
+                  {uniqueYears.map((year) => (
+                    <option key={year} value={year}>
+                      {year}
+                    </option>
+                  ))}
+                </select>
 
-              {/* Projets */}
-              <select
-                className="w-full p-2 mb-4 border bg-gray-50 border-gray-200 rounded-xl focus:outline-none"
-                value={selectedProject || ""}
-                onChange={(e) => {
-                  const projectId = parseInt(e.target.value, 10);
-                  setSelectedProject(projectId);
-                  loadProjectImages(projectId);
-                }}
-              >
-                <option value="" disabled>
-                  Sélectionnez un projet
-                </option>
-                {filteredProjects.map((project) => (
-                  <option key={project.id} value={project.id}>
-                    {project.title}
+                {/* Projets */}
+                <select
+                  className="w-full p-2 mb-4 border bg-gray-50 border-gray-200 rounded-xl focus:outline-none"
+                  value={selectedProject || "summary"}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    if (value === "summary") {
+                      setSelectedProject(null);
+                    } else {
+                      setSelectedProject(parseInt(value, 10));
+                      loadProjectData(parseInt(value, 10));
+                    }
+                  }}
+                >
+                  <option value="summary">
+                    {summaryTitle || "Résumé de l'année"}
                   </option>
-                ))}
-              </select>
-            </div>
+                  {filteredProjects.map((project) => (
+                    <option key={project.id} value={project.id}>
+                      {project.title}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
-            {/* filtre mode desktop */}
-            <div className="hidden lg:block">
-              <div className="flex items-center">
-                <div className="flex flex-col">
-                  <button className="mb-3" onClick={handleScrollDown}>
-                    <AiFillCaretUp
-                      className="text-gray-400 hover:text-myred"
-                      size={25}
-                    />
-                  </button>
-                  <button className="mb-3" onClick={handleScrollUp}>
-                    <AiFillCaretDown
-                      className="text-gray-400 hover:text-myred"
-                      size={25}
-                    />
-                  </button>
+              {/* Version desktop */}
+              <div className="hidden lg:block">
+                <div className="flex items-center">
+                  <div className="flex flex-col">
+                    <button className="mb-3" onClick={handleScrollUp}>
+                      <AiFillCaretUp
+                        className="text-gray-400 hover:text-myred"
+                        size={25}
+                      />
+                    </button>
+                    <button className="mb-3" onClick={handleScrollDown}>
+                      <AiFillCaretDown
+                        className="text-gray-400 hover:text-myred"
+                        size={25}
+                      />
+                    </button>
+                  </div>
+
+                  <ul className="space-y-2 flex flex-col justify-center items-center h-36">
+                    {visibleYears.map((year) => (
+                      <li key={year}>
+                        <button
+                          className={`w-full px-6 rounded-lg ${
+                            year === selectedYear
+                              ? "text-myred font-avenirBlack text-4xl"
+                              : "text-gray-400 font-avenirRegular hover:underline"
+                          }`}
+                          onClick={() =>
+                            setSelectedYearIndex(uniqueYears.indexOf(year))
+                          }
+                        >
+                          {year}
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
 
-                <ul className="space-y-2 flex flex-col justify-center items-center h-36">
-                  {visibleYears.map((year) => (
-                    <li key={year}>
+                <div className="block h-[2px] w-full bg-myblue my-6" />
+
+                <ul className="space-y-2">
+                  <li>
+                    <button
+                      className={`text-left py-1 rounded-lg text-3xl font-avenirBlack ${
+                        selectedProject === null
+                          ? "text-myred underline"
+                          : "text-gray-400 hover:underline"
+                      }`}
+                      onClick={() => setSelectedProject(null)}
+                    >
+                      {summaryTitle || "Résumé de l'année"}
+                    </button>
+                  </li>
+                  {filteredProjects.map((project) => (
+                    <li key={project.id}>
                       <button
-                        className={`w-full px-6 rounded-lg ${
-                          year === selectedYear
-                            ? "text-myred font-avenirBlack text-4xl"
-                            : "text-gray-400 font-avenirRegular hover:underline"
+                        className={`text-left py-1 rounded-lg text-3xl font-avenirBlack ${
+                          selectedProject === project.id
+                            ? "text-myred underline"
+                            : "text-gray-400 hover:underline"
                         }`}
-                        onClick={() =>
-                          setSelectedYearIndex(uniqueYears.indexOf(year))
-                        }
+                        onClick={() => {
+                          setSelectedProject(project.id);
+                          loadProjectData(project.id);
+                        }}
                       >
-                        {year}
+                        {project.title}
                       </button>
                     </li>
                   ))}
                 </ul>
               </div>
-
-              <div className="block h-[2px] w-full bg-myblue my-6" />
-
-              <ul className="space-y-2">
-                {filteredProjects.map((project) => (
-                  <li key={project.id}>
-                    <button
-                      className={`text-left py-1 rounded-lg text-3xl font-avenirBlack ${
-                        selectedProject === project.id
-                          ? "text-myred underline"
-                          : "text-gray-400 hover:underline"
-                      }`}
-                      onClick={() => {
-                        setSelectedProject(project.id);
-                        loadProjectImages(project.id);
-                      }}
-                    >
-                      {project.title}
-                    </button>
-                  </li>
-                ))}
-              </ul>
             </div>
+
+            {/* PDF download link */}
+            {projectPDF && (
+              <div className="flex items-center mt-6">
+                <a
+                  href={projectPDF}
+                  download
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center space-x-2 text-myred hover:underline text-lg"
+                  aria-label={`Télécharger le PDF : ${projectNamePDF}`}
+                >
+                  <span>{projectNamePDF}</span>
+                  <AiFillFilePdf className="text-2xl" />
+                </a>
+              </div>
+            )}
           </div>
 
-          {/* Contenu */}
+          {/* Content */}
           <div className="col-span-3">
-            {loading ? (
-              <div className="text-center h-[500px] md:h-[700px] bg-gray-100 rounded-3xl"></div>
-            ) : (
+            {selectedProject === null && summaryImage && (
+              <div className="mb-8">
+                <img
+                  src={summaryImage}
+                  alt={summaryTitle || "Résumé de l'année"}
+                  className="w-full h-auto rounded-lg shadow-lg"
+                />
+              </div>
+            )}
+
+            {selectedProject !== null && (
               <Swiper
                 grabCursor
                 centeredSlides
                 slidesPerView={1}
                 effect="coverflow"
-                loop
+                loop={projectImages.length > 1}
                 pagination={{ clickable: true }}
                 autoplay={{ delay: 5000, disableOnInteraction: false }}
                 modules={[EffectCoverflow, Pagination, Autoplay]}
@@ -229,7 +283,7 @@ const ProjectsSection: FC<ProjectsSectionProps> = ({ projects }) => {
                     <img
                       src={image}
                       alt={`Image ${index + 1}`}
-                      className="w-full h-full object-cover rounded-3xl "
+                      className="w-full h-full object-cover rounded-3xl"
                     />
                   </SwiperSlide>
                 ))}
