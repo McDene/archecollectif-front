@@ -110,21 +110,21 @@ const ProjectsSection: FC<ProjectsSectionProps> = ({ projects }) => {
   };
 
   return (
-    <section className="bg-gray-50 py-20 md:py-28 min-h-lvh">
+    <section className="bg-gradient-to-b from-myred to-gray-50 py-20 md:py-36 ">
       <div className="max-w-7xl mx-auto px-4">
-        <h1 className="text-5xl md:text-8xl block lg:hidden font-avenirBlack text-center text-myblue pb-10 md:pb-16">
-          Projets
+        <h1 className="text-7xl md:text-8xl block lg:hidden font-avenirBlack  text-gray-800 pb-16">
+          projets
         </h1>
 
-        <div className="flex flex-col lg:grid lg:grid-cols-4 gap-8">
+        <div className="flex flex-col lg:grid lg:grid-cols-4 gap-8 ">
           {/* Sidebar */}
-          <div className="col-span-1 flex flex-col justify-between">
+          <div className="col-span-1 flex flex-col justify-between ">
             <div>
               {/* Version mobile */}
               <div className="block lg:hidden">
                 {/* Années */}
                 <select
-                  className="w-full p-2 mb-4 border bg-gray-50 border-gray-200 rounded-xl focus:outline-none"
+                  className="w-full p-2 mb-4 border-2 bg-transparent border-gray-200 rounded-xl focus:outline-none"
                   value={selectedYear}
                   onChange={(e) =>
                     setSelectedYearIndex(uniqueYears.indexOf(e.target.value))
@@ -139,7 +139,7 @@ const ProjectsSection: FC<ProjectsSectionProps> = ({ projects }) => {
 
                 {/* Projets */}
                 <select
-                  className="w-full p-2 mb-4 border bg-gray-50 border-gray-200 rounded-xl focus:outline-none"
+                  className="w-full p-2 mb-4 border-2 bg-transparent border-gray-200 rounded-xl focus:outline-none"
                   value={selectedProject || "summary"}
                   onChange={(e) => {
                     const value = e.target.value;
@@ -163,19 +163,19 @@ const ProjectsSection: FC<ProjectsSectionProps> = ({ projects }) => {
               </div>
 
               {/* Version desktop */}
-              <div className="hidden lg:block">
-                <div className="flex items-center">
+              <div className="hidden lg:block ">
+                <div className="flex items-center pb-12">
                   <div className="flex flex-col">
                     <button className="mb-3" onClick={handleScrollUp}>
                       <AiFillCaretUp
-                        className="text-gray-400 hover:text-myred"
-                        size={25}
+                        className="text-gray-800 hover:text-myred"
+                        size={20}
                       />
                     </button>
                     <button className="mb-3" onClick={handleScrollDown}>
                       <AiFillCaretDown
-                        className="text-gray-400 hover:text-myred"
-                        size={25}
+                        className="text-gray-800 hover:text-myred"
+                        size={20}
                       />
                     </button>
                   </div>
@@ -186,8 +186,8 @@ const ProjectsSection: FC<ProjectsSectionProps> = ({ projects }) => {
                         <button
                           className={`w-full px-6 rounded-lg ${
                             year === selectedYear
-                              ? "text-myred font-avenirBlack text-4xl"
-                              : "text-gray-400 font-avenirRegular hover:underline"
+                              ? "text-gray-800 font-avenirBlack text-4xl"
+                              : "text-gray-600 font-avenirRegular hover:underline"
                           }`}
                           onClick={() =>
                             setSelectedYearIndex(uniqueYears.indexOf(year))
@@ -200,15 +200,15 @@ const ProjectsSection: FC<ProjectsSectionProps> = ({ projects }) => {
                   </ul>
                 </div>
 
-                <div className="block h-[2px] w-full bg-myblue my-6" />
+                {/* <div className="block h-[2px] w-full bg-myblue my-6" /> */}
 
                 <ul className="space-y-2">
                   <li>
                     <button
                       className={`text-left py-1 rounded-lg text-3xl font-avenirBlack ${
                         selectedProject === null
-                          ? "text-myred underline"
-                          : "text-gray-400 hover:underline"
+                          ? "text-gray-800 underline"
+                          : "text-gray-600 hover:underline"
                       }`}
                       onClick={() => setSelectedProject(null)}
                     >
@@ -220,8 +220,8 @@ const ProjectsSection: FC<ProjectsSectionProps> = ({ projects }) => {
                       <button
                         className={`text-left py-1 rounded-lg text-3xl font-avenirBlack ${
                           selectedProject === project.id
-                            ? "text-myred underline"
-                            : "text-gray-400 hover:underline"
+                            ? "text-gray-800 underline"
+                            : "text-gray-600 hover:underline"
                         }`}
                         onClick={() => {
                           setSelectedProject(project.id);
@@ -257,14 +257,14 @@ const ProjectsSection: FC<ProjectsSectionProps> = ({ projects }) => {
           {/* Content */}
           <div className="col-span-3">
             {loading && (
-              <div className="text-center h-[500px] md:h-[700px] bg-gray-100 rounded-3xl flex items-center justify-center"></div>
+              <div className="text-center h-[500px] md:h-[700px] bg-myred rounded-3xl flex items-center justify-center"></div>
             )}
             {!loading && selectedProject === null && summaryImage && (
               <div className="mb-8">
                 <img
                   src={summaryImage}
                   alt={summaryTitle || "Résumé de l'année"}
-                  className="w-full h-auto rounded-lg shadow-lg"
+                  className="w-full h-auto rounded-3xl shadow-lg"
                 />
               </div>
             )}
@@ -285,7 +285,7 @@ const ProjectsSection: FC<ProjectsSectionProps> = ({ projects }) => {
                     <img
                       src={image}
                       alt={`Image ${index + 1}`}
-                      className="w-full h-full object-cover rounded-3xl"
+                      className="w-full h-full object-cover rounded-3xl shadow-lg"
                     />
                   </SwiperSlide>
                 ))}

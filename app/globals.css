@@ -42,5 +42,13 @@ body {
 }
 
 .bg-title {
-  font-size: 220px;
+  font-size: 18rem;
+}
+
+.bg-title-2 {
+  font-size: 14rem;
+}
+
+.bg-title-3 {
+  font-size: 6rem;
 }
