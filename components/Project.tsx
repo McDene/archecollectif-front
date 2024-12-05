@@ -110,11 +110,14 @@ const ProjectsSection: FC<ProjectsSectionProps> = ({ projects }) => {
   };
 
   return (
-    <section className="bg-gradient-to-b from-myred to-myred py-20 md:pb-36 md:pt-56 relative">
-      <h1 className="absolute  transform translate-y-32 -translate-x-44 text-7xl md:text-[10rem] font-avenirBlack text-myblue rotate-90 z-0 opacity-100 ">
+    <section className="bg-gradient-to-b from-gray-100 to-gray-100 py-20 md:pb-36 md:pt-56 relative">
+      {/* <h1 className="absolute transform hidden lg:block translate-y-32 -translate-x-52 text-7xl md:text-[10rem] font-avenirBlack text-myblue -rotate-90 z-0 opacity-100 ">
         projets
-      </h1>
+      </h1> */}
       <div className="max-w-6xl 2xl:max-w-7xl mx-auto px-4 relative -mt-14">
+        <h1 className="block lg:hidden text-7xl font-avenirBlack text-myblue pb-12">
+          projets
+        </h1>
         <div className="flex flex-col lg:grid lg:grid-cols-4 gap-8 ">
           {/* Sidebar */}
           <div className="col-span-1 flex flex-col justify-between ">
@@ -167,13 +170,13 @@ const ProjectsSection: FC<ProjectsSectionProps> = ({ projects }) => {
                   <div className="flex flex-col">
                     <button className="mb-3" onClick={handleScrollUp}>
                       <AiFillCaretUp
-                        className="text-gray-800 hover:text-myred"
+                        className="text-myred hover:text-gray-400"
                         size={20}
                       />
                     </button>
-                    <button className="mb-3" onClick={handleScrollDown}>
+                    <button className="mb-1" onClick={handleScrollDown}>
                       <AiFillCaretDown
-                        className="text-gray-800 hover:text-myred"
+                        className="text-myred hover:text-gray-400"
                         size={20}
                       />
                     </button>
@@ -185,8 +188,8 @@ const ProjectsSection: FC<ProjectsSectionProps> = ({ projects }) => {
                         <button
                           className={`w-full px-6 rounded-lg ${
                             year === selectedYear
-                              ? "text-gray-800 font-avenirBlack text-4xl"
-                              : "text-gray-600 font-avenirRegular hover:underline"
+                              ? "text-myred font-avenirBlack text-4xl"
+                              : "text-gray-400 font-avenirRegular hover:underline"
                           }`}
                           onClick={() =>
                             setSelectedYearIndex(uniqueYears.indexOf(year))
@@ -206,8 +209,8 @@ const ProjectsSection: FC<ProjectsSectionProps> = ({ projects }) => {
                     <button
                       className={`text-left py-1 rounded-lg text-2xl font-avenirBlack ${
                         selectedProject === null
-                          ? "text-gray-800 underline"
-                          : "text-gray-600 hover:underline"
+                          ? "text-myred underline"
+                          : "text-gray-400 hover:underline"
                       }`}
                       onClick={() => setSelectedProject(null)}
                     >
@@ -219,8 +222,8 @@ const ProjectsSection: FC<ProjectsSectionProps> = ({ projects }) => {
                       <button
                         className={`text-left py-1 rounded-lg text-2xl font-avenirBlack ${
                           selectedProject === project.id
-                            ? "text-gray-800 underline"
-                            : "text-gray-600 hover:underline"
+                            ? "text-myred underline"
+                            : "text-gray-400 hover:underline"
                         }`}
                         onClick={() => {
                           setSelectedProject(project.id);
@@ -236,17 +239,18 @@ const ProjectsSection: FC<ProjectsSectionProps> = ({ projects }) => {
             </div>
 
             {/* PDF download link */}
-            {projectPDF && (
-              <div className="flex items-center mt-6">
+            {selectedProject !== null && projectPDF && projectNamePDF && (
+              <div className="flex flex-col mt-6">
+                <p className="text-gray-400 pb-4">{projectNamePDF}</p>
                 <a
                   href={projectPDF}
                   download
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center space-x-2 text-myred hover:underline text-lg"
+                  className="flex items-center space-x-2 text-myred hover:underline "
                   aria-label={`Télécharger le PDF : ${projectNamePDF}`}
                 >
-                  <span>{projectNamePDF}</span>
+                  <span>Lire le pdf</span>
                   <AiFillFilePdf className="text-2xl" />
                 </a>
               </div>
@@ -256,14 +260,14 @@ const ProjectsSection: FC<ProjectsSectionProps> = ({ projects }) => {
           {/* Content */}
           <div className="col-span-3">
             {loading && (
-              <div className="text-center h-[500px] md:h-[700px] bg-myred rounded-3xl flex items-center justify-center"></div>
+              <div className="text-center h-[500px] md:h-[700px] bg-gray-200 rounded-3xl flex items-center justify-center"></div>
             )}
             {!loading && selectedProject === null && summaryImage && (
               <div className="mb-8">
                 <img
                   src={summaryImage}
                   alt={summaryTitle || "Résumé de l'année"}
-                  className="w-full h-auto rounded-3xl shadow-lg"
+                  className="w-full h-[500px] md:h-[700px] object-cover  rounded-3xl shadow-lg"
                 />
               </div>
             )}
