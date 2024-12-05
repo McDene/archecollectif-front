@@ -9,11 +9,11 @@ interface TeamMember {
 
 export default function Team({ teams }: { teams: TeamMember[] }) {
   return (
-    <section className="bg-gray-50 pt-5 md:pt-12 py-20 md:pb-36 relative">
-      <h2 className="text-[7rem] md:text-[14rem] lg:text-[18rem] text-center text-myblue px-4 font-avenirBlack relative z-10">
+    <section className="bg-gray-100 pt-5 md:pt-12 py-20 md:pb-36 relative">
+      <h2 className="text-[7rem] md:text-[14rem] lg:text-[18rem] text-center text-myblue px-4 font-avenirBlack relative z-10 ">
         équipe
       </h2>
-      <div className="max-w-7xl mx-auto bg-myred py-20 md:py-28 rounded-3xl shadow-lg relative -mt-14 md:-mt-28 lg:-mt-40 z-0">
+      <div className="max-w-6xl 2xl:max-w-7xl mx-auto bg-myred py-20 md:py-28 rounded-3xl shadow-lg relative -mt-14 md:-mt-28 lg:-mt-40 z-0 ">
         {/* Desktop */}
         <div className="hidden md:grid grid-cols-3 gap-x-10 gap-y-16">
           {/* Colonne 1 */}

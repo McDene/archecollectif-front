@@ -3,6 +3,7 @@ import Header from "../components/Header";
 import About from "../components/About";
 import Project from "../components/Project";
 import Team from "../components/Teams";
+import Events from "../components/Events";
 import Footer from "../components/Footer";
 
 export default async function HomePage() {
@@ -59,6 +60,7 @@ export default async function HomePage() {
         <About titleAbout={titleAbout} textAbout={textAbout} />
         <Project projects={projects} />
         <Team teams={teams} />
+        <Events />
         <Footer />
       </>
     );

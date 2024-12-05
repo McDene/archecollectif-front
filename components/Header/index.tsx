@@ -51,7 +51,7 @@ export default function Navbar() {
         isFixed ? "fixed top-0" : "md:absolute md:bottom-0 fixed "
       } left-0 right-0 z-50 bg-myblue py-4 shadow-sm`}
     >
-      <div className="max-w-7xl mx-auto flex justify-between items-center px-4">
+      <div className="max-w-6xl 2xl:max-w-7xl mx-auto flex justify-between items-center px-4">
         {/* Logo */}
         <div className="flex items-center text-2xl text-myred font-avenirRegular">
           <Link href="/">

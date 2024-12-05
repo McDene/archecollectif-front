@@ -2,8 +2,8 @@ import Image from "next/image";
 
 export default function Footer() {
   return (
-    <footer className="bg-myblue text-neutral-content py-10">
-      <div className="max-w-7xl mx-auto px-4 md:px-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
+    <footer className="bg-myred text-neutral-content py-10">
+      <div className="max-w-6xl 2xl:max-w-7xl mx-auto px-4 md:px-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
         {/* Informations de contact */}
         <aside className="flex flex-col items-start space-y-4 text-white">
           <div className="flex items-center space-x-2">

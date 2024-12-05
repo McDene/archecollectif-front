@@ -110,12 +110,11 @@ const ProjectsSection: FC<ProjectsSectionProps> = ({ projects }) => {
   };
 
   return (
-    <section className="bg-gradient-to-b from-myred to-gray-50 py-20 md:py-36 ">
-      <div className="max-w-7xl mx-auto px-4">
-        <h1 className="text-7xl md:text-8xl block lg:hidden font-avenirBlack  text-gray-800 pb-16">
-          projets
-        </h1>
-
+    <section className="bg-gradient-to-b from-myred to-myred py-20 md:pb-36 md:pt-56 relative">
+      <h1 className="absolute  transform translate-y-32 -translate-x-44 text-7xl md:text-[10rem] font-avenirBlack text-myblue rotate-90 z-0 opacity-100 ">
+        projets
+      </h1>
+      <div className="max-w-6xl 2xl:max-w-7xl mx-auto px-4 relative -mt-14">
         <div className="flex flex-col lg:grid lg:grid-cols-4 gap-8 ">
           {/* Sidebar */}
           <div className="col-span-1 flex flex-col justify-between ">
@@ -205,7 +204,7 @@ const ProjectsSection: FC<ProjectsSectionProps> = ({ projects }) => {
                 <ul className="space-y-2">
                   <li>
                     <button
-                      className={`text-left py-1 rounded-lg text-3xl font-avenirBlack ${
+                      className={`text-left py-1 rounded-lg text-2xl font-avenirBlack ${
                         selectedProject === null
                           ? "text-gray-800 underline"
                           : "text-gray-600 hover:underline"
@@ -218,7 +217,7 @@ const ProjectsSection: FC<ProjectsSectionProps> = ({ projects }) => {
                   {filteredProjects.map((project) => (
                     <li key={project.id}>
                       <button
-                        className={`text-left py-1 rounded-lg text-3xl font-avenirBlack ${
+                        className={`text-left py-1 rounded-lg text-2xl font-avenirBlack ${
                           selectedProject === project.id
                             ? "text-gray-800 underline"
                             : "text-gray-600 hover:underline"
