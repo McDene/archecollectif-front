@@ -110,10 +110,7 @@ const ProjectsSection: FC<ProjectsSectionProps> = ({ projects }) => {
   };
 
   return (
-    <section className="bg-gradient-to-b from-gray-100 to-gray-100 py-20 md:pb-36 md:pt-56 relative">
-      {/* <h1 className="absolute transform hidden lg:block translate-y-32 -translate-x-52 text-7xl md:text-[10rem] font-avenirBlack text-myblue -rotate-90 z-0 opacity-100 ">
-        projets
-      </h1> */}
+    <section className="bg-gradient-to-b from-gray-100 to-gray-100 pb-20 pt-32 md:pb-36 md:pt-56 relative">
       <div className="max-w-6xl 2xl:max-w-7xl mx-auto px-4 relative -mt-14">
         <h1 className="block lg:hidden text-7xl font-avenirBlack text-myblue pb-12">
           projets

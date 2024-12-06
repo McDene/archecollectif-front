@@ -8,20 +8,24 @@ import Footer from "../components/Footer";
 
 export default async function HomePage() {
   try {
-    const [heroData, aboutData, projectData, teamsData] = await Promise.all([
-      fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/Video?populate=Video`, {
-        next: { revalidate: 0 }, // Pas de cache
-      }).then((res) => res.json()),
-      fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/About`, {
-        next: { revalidate: 0 }, // Pas de cache
-      }).then((res) => res.json()),
-      fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/projects`, {
-        next: { revalidate: 0 }, // Pas de cache
-      }).then((res) => res.json()),
-      fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/teams?populate=Image`, {
-        next: { revalidate: 0 }, // Pas de cache
-      }).then((res) => res.json()),
-    ]);
+    const [heroData, aboutData, projectData, teamsData, eventsData] =
+      await Promise.all([
+        fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/Video?populate=Video`, {
+          next: { revalidate: 0 }, // Pas de cache
+        }).then((res) => res.json()),
+        fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/About`, {
+          next: { revalidate: 0 }, // Pas de cache
+        }).then((res) => res.json()),
+        fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/projects`, {
+          next: { revalidate: 0 }, // Pas de cache
+        }).then((res) => res.json()),
+        fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/teams?populate=Image`, {
+          next: { revalidate: 0 }, // Pas de cache
+        }).then((res) => res.json()),
+        fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/actualties?populate=*`, {
+          next: { revalidate: 0 }, // Pas de cache
+        }).then((res) => res.json()),
+      ]);
 
     // Transformation des données des projets
     const projects =
@@ -49,6 +53,16 @@ export default async function HomePage() {
         })
       ) || [];
 
+    // Transformation des données des événements
+    const events =
+      eventsData?.data.map((event: any) => ({
+        id: event.id,
+        imageUrl: event.Image?.url || "",
+        tag: event.actualites_tag?.Name?.trim().toLowerCase() || "",
+        linkName: event.Nom_lien || "",
+        linkUrl: event.Lien || "",
+      })) || [];
+
     const videoUrl = heroData?.data?.Video?.url || "";
     const titleAbout = aboutData?.data?.Title || "Default Title";
     const textAbout = aboutData?.data?.Text || "Default Text";
@@ -60,7 +74,7 @@ export default async function HomePage() {
         <About titleAbout={titleAbout} textAbout={textAbout} />
         <Project projects={projects} />
         <Team teams={teams} />
-        <Events />
+        <Events events={events} />
         <Footer />
       </>
     );
