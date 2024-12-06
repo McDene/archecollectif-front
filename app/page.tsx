@@ -6,56 +6,86 @@ import Team from "../components/Teams";
 import Events from "../components/Events";
 import Footer from "../components/Footer";
 
+interface HeroData {
+  data: {
+    Video: { url: string };
+  };
+}
+
+interface AboutData {
+  data: {
+    Title: string;
+    Text: string;
+  };
+}
+
+interface ProjectData {
+  id: number;
+  Title: string;
+  Date: string;
+}
+
+interface TeamData {
+  id: number;
+  Name: string;
+  Content: string;
+  Image: { url: string };
+}
+
+interface EventData {
+  id: number;
+  Image: { url: string };
+  actualites_tag: { Name: string };
+  Nom_lien: string;
+  Lien: string;
+}
+
 export default async function HomePage() {
   try {
-    const [heroData, aboutData, projectData, teamsData, eventsData] =
-      await Promise.all([
-        fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/Video?populate=Video`, {
-          next: { revalidate: 0 }, // Pas de cache
-        }).then((res) => res.json()),
-        fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/About`, {
-          next: { revalidate: 0 }, // Pas de cache
-        }).then((res) => res.json()),
-        fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/projects`, {
-          next: { revalidate: 0 }, // Pas de cache
-        }).then((res) => res.json()),
-        fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/teams?populate=Image`, {
-          next: { revalidate: 0 }, // Pas de cache
-        }).then((res) => res.json()),
-        fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/actualties?populate=*`, {
-          next: { revalidate: 0 }, // Pas de cache
-        }).then((res) => res.json()),
-      ]);
+    const [heroData, aboutData, projectData, teamsData, eventsData]: [
+      HeroData,
+      AboutData,
+      { data: ProjectData[] },
+      { data: TeamData[] },
+      { data: EventData[] }
+    ] = await Promise.all([
+      fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/Video?populate=Video`, {
+        next: { revalidate: 0 },
+      }).then((res) => res.json()),
+      fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/About`, {
+        next: { revalidate: 0 },
+      }).then((res) => res.json()),
+      fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/projects`, {
+        next: { revalidate: 0 },
+      }).then((res) => res.json()),
+      fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/teams?populate=Image`, {
+        next: { revalidate: 0 },
+      }).then((res) => res.json()),
+      fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/actualties?populate=*`, {
+        next: { revalidate: 0 },
+      }).then((res) => res.json()),
+    ]);
 
     // Transformation des données des projets
     const projects =
-      projectData?.data.map(
-        (project: { id: number; Title: string; Date: string }) => ({
-          id: project.id,
-          title: project.Title,
-          date: project.Date,
-        })
-      ) || [];
+      projectData?.data.map((project) => ({
+        id: project.id,
+        title: project.Title,
+        date: project.Date,
+      })) || [];
 
     // Transformation des données des équipes
     const teams =
-      teamsData?.data.map(
-        (team: {
-          id: number;
-          Name: string;
-          Content: string;
-          Image: { url: string };
-        }) => ({
-          id: team.id,
-          name: team.Name,
-          content: team.Content,
-          imageUrl: team.Image?.url || "",
-        })
-      ) || [];
+      teamsData?.data.map((team) => ({
+        id: team.id,
+        name: team.Name,
+        content: team.Content,
+        imageUrl: team.Image?.url || "",
+      })) || [];
 
     // Transformation des données des événements
     const events =
-      eventsData?.data.map((event: any) => ({
+      eventsData?.data.map((event) => ({
         id: event.id,
         imageUrl: event.Image?.url || "",
         tag: event.actualites_tag?.Name?.trim().toLowerCase() || "",
