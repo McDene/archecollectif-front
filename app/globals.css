@@ -31,16 +31,6 @@ body {
   font-family: var(--font-avenir-regular, Arial, sans-serif);
 }
 
-/* CSS pour les puces de pagination */
-.custom-pagination .swiper-pagination-bullet {
-  background-color: #3333;
-  opacity: 1;
-}
-
-.custom-pagination .swiper-pagination-bullet-active {
-  background-color: #223c60;
-}
-
 .bg-title {
   font-size: 18rem;
 }
@@ -51,4 +41,14 @@ body {
 
 .bg-title-3 {
   font-size: 6rem;
+}
+
+/* CSS pour les puces de pagination */
+.custom-pagination .swiper-pagination-bullet {
+  background-color: #3333;
+  opacity: 1;
+}
+
+.custom-pagination .swiper-pagination-bullet-active {
+  background-color: #223c60;
 }

@@ -77,7 +77,7 @@ const ProjectsSection: FC<ProjectsSectionProps> = ({ projects }) => {
       const images =
         data?.data?.[0]?.Image?.map((img: { url: string }) => img.url) || [];
       const pdf = data?.data?.[0]?.PDF?.url || null;
-      const pdfName = data?.data?.[0]?.PDF_Name || null;
+      const pdfName = data?.data?.[0]?.Descriptif_projet || null;
 
       setProjectImages(images);
       setProjectPDF(pdf);
@@ -110,7 +110,10 @@ const ProjectsSection: FC<ProjectsSectionProps> = ({ projects }) => {
   };
 
   return (
-    <section className="bg-gradient-to-b from-gray-100 to-gray-100 pb-20 pt-32 md:pb-36 md:pt-56 relative">
+    <section
+      id="projets"
+      className="bg-gradient-to-b from-gray-100 to-gray-100 pb-20 pt-32 md:pb-36 md:pt-56 relative"
+    >
       <div className="max-w-6xl 2xl:max-w-7xl mx-auto px-4 relative -mt-14">
         <h1 className="block lg:hidden text-7xl font-avenirBlack text-myblue pb-12">
           projets
@@ -163,7 +166,7 @@ const ProjectsSection: FC<ProjectsSectionProps> = ({ projects }) => {
 
               {/* Version desktop */}
               <div className="hidden lg:block ">
-                <div className="flex items-center pb-12">
+                <div className="flex items-center pb-3">
                   <div className="flex flex-col">
                     <button className="mb-3" onClick={handleScrollUp}>
                       <AiFillCaretUp
@@ -238,17 +241,17 @@ const ProjectsSection: FC<ProjectsSectionProps> = ({ projects }) => {
             {/* PDF download link */}
             {selectedProject !== null && projectPDF && projectNamePDF && (
               <div className="flex flex-col mt-6">
-                <p className="text-gray-400 pb-4">{projectNamePDF}</p>
+                <p className="text-gray-400 pb-4 text-sm">{projectNamePDF}</p>
                 <a
                   href={projectPDF}
                   download
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center space-x-2 text-myred hover:underline "
+                  className="flex items-center text-sm space-x-2 text-myred hover:underline "
                   aria-label={`Télécharger le PDF : ${projectNamePDF}`}
                 >
-                  <span>Lire le pdf</span>
-                  <AiFillFilePdf className="text-2xl" />
+                  <span>Lire le PDF</span>
+                  <AiFillFilePdf className="text-xl" />
                 </a>
               </div>
             )}
@@ -275,7 +278,7 @@ const ProjectsSection: FC<ProjectsSectionProps> = ({ projects }) => {
                 slidesPerView={1}
                 effect="coverflow"
                 loop={projectImages.length > 1}
-                pagination={{ clickable: true }}
+                pagination={{ clickable: true, el: ".custom-pagination" }}
                 autoplay={{ delay: 5000, disableOnInteraction: false }}
                 modules={[EffectCoverflow, Pagination, Autoplay]}
                 className="w-full h-[500px] md:h-[700px]"

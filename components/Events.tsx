@@ -27,7 +27,10 @@ export default function Events({ events }: EventsProps) {
   const [activeEventIndex, setActiveEventIndex] = useState(0);
 
   return (
-    <section className="bg-gradient-to-b from-gray-100 to-gray-100 py-20 md:py-28 lg:py-36">
+    <section
+      id="news"
+      className="bg-gradient-to-b from-gray-100 to-gray-100 py-20 md:py-28 lg:py-36"
+    >
       <div className="max-w-6xl 2xl:max-w-7xl mx-auto px-4">
         <h2 className="text-6xl  md:text-7xl lg:text-9xl font-avenirBlack text-myred pb-12 lg:pb-24">
           actualités
@@ -68,7 +71,7 @@ export default function Events({ events }: EventsProps) {
               }}
               effect="coverflow"
               loop={filteredEvents.length > 1}
-              pagination={{ clickable: true }}
+              pagination={{ clickable: true, el: ".custom-pagination" }}
               autoplay={{ delay: 5000, disableOnInteraction: false }}
               onSlideChange={(swiper) => setActiveEventIndex(swiper.realIndex)}
               coverflowEffect={{

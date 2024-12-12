@@ -4,7 +4,7 @@ type HeroProps = {
 
 export default function Hero({ videoUrl }: HeroProps) {
   return (
-    <section className="relative h-screen-dvh overflow-hidden">
+    <section id="home" className="relative h-screen-dvh overflow-hidden">
       {videoUrl ? (
         <video
           autoPlay

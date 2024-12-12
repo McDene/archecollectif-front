@@ -6,10 +6,9 @@ import { AiOutlineMenu, AiOutlineClose } from "react-icons/ai";
 
 export default function Navbar() {
   const [isFixed, setIsFixed] = useState(false);
-  const [isMenuOpen, setIsMenuOpen] = useState(false); // État pour gérer le menu mobile
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const headerHeight = 64;
 
-  // Gestion de la position du header pour les écrans md et plus
   useEffect(() => {
     const handleScroll = () => {
       const isMdOrLarger = window.matchMedia("(min-width: 768px)").matches;
@@ -23,7 +22,6 @@ export default function Navbar() {
           setIsFixed(false);
         }
       } else {
-        // Désactiver l'effet isFixed pour les écrans inférieurs à md
         setIsFixed(false);
       }
     };
@@ -32,7 +30,6 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Empêche le scroll quand le menu est ouvert
   useEffect(() => {
     if (isMenuOpen) {
       document.body.style.overflow = "hidden";
@@ -45,10 +42,19 @@ export default function Navbar() {
     };
   }, [isMenuOpen]);
 
+  // Correction : Ajout d'un type explicite pour `id`
+  const handleScrollTo = (id: string) => {
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth" });
+    }
+    setIsMenuOpen(false); // Ferme le menu si on est sur mobile
+  };
+
   return (
     <header
       className={`${
-        isFixed ? "fixed top-0" : "md:absolute md:bottom-0 fixed "
+        isFixed ? "fixed top-0" : "md:absolute md:bottom-0 fixed"
       } left-0 right-0 z-50 bg-myblue py-4 shadow-sm`}
     >
       <div className="max-w-6xl 2xl:max-w-7xl mx-auto flex justify-between items-center px-4">
@@ -61,21 +67,36 @@ export default function Navbar() {
 
         {/* Menu pour Desktop */}
         <nav className="hidden md:flex space-x-8 text-xl text-myred font-avenirRegular">
-          <Link href="/" className="hover:underline">
+          <button
+            onClick={() => handleScrollTo("home")}
+            className="hover:underline"
+          >
             home
-          </Link>
-          <Link href="#projets" className="hover:underline">
+          </button>
+          <button
+            onClick={() => handleScrollTo("projets")}
+            className="hover:underline"
+          >
             projets
-          </Link>
-          <Link href="#team" className="hover:underline">
+          </button>
+          <button
+            onClick={() => handleScrollTo("team")}
+            className="hover:underline"
+          >
             équipe
-          </Link>
-          <Link href="#news" className="hover:underline">
+          </button>
+          <button
+            onClick={() => handleScrollTo("news")}
+            className="hover:underline"
+          >
             actualités
-          </Link>
-          <Link href="#contact" className="hover:underline">
+          </button>
+          <button
+            onClick={() => handleScrollTo("contact")}
+            className="hover:underline"
+          >
             contact
-          </Link>
+          </button>
         </nav>
 
         {/* Menu burger pour Mobile */}
@@ -93,57 +114,42 @@ export default function Navbar() {
       {/* Navigation mobile */}
       {isMenuOpen && (
         <div className="md:hidden bg-myblue text-myred fixed inset-0 flex flex-col items-center justify-center space-y-6 text-xl z-50">
-          {/* Bouton Close en haut à droite */}
           <button
             onClick={() => setIsMenuOpen(false)}
             className="absolute top-4 right-4 text-myred text-3xl"
-            aria-label="Close menu"
           >
             <AiOutlineClose />
           </button>
-
-          {/* Liens du menu */}
-          <div className="flex items-center text-4xl text-myred font-avenirRegular">
-            <Link href="/">
-              <span className="font-avenirBlack">L&apos;ARCH</span> Collectif
-            </Link>
-          </div>
-
-          <Link
-            href="/"
+          <button
+            onClick={() => handleScrollTo("home")}
             className="hover:underline"
-            onClick={() => setIsMenuOpen(false)}
           >
-            Home
-          </Link>
-          <Link
-            href="/projects"
+            home
+          </button>
+          <button
+            onClick={() => handleScrollTo("projets")}
             className="hover:underline"
-            onClick={() => setIsMenuOpen(false)}
           >
-            Nos projets
-          </Link>
-          <Link
-            href="/team"
+            projets
+          </button>
+          <button
+            onClick={() => handleScrollTo("team")}
             className="hover:underline"
-            onClick={() => setIsMenuOpen(false)}
           >
-            L&apos;équipe
-          </Link>
-          <Link
-            href="/news"
+            équipe
+          </button>
+          <button
+            onClick={() => handleScrollTo("news")}
             className="hover:underline"
-            onClick={() => setIsMenuOpen(false)}
           >
-            Nos actualités
-          </Link>
-          <Link
-            href="/contact"
+            actualités
+          </button>
+          <button
+            onClick={() => handleScrollTo("contact")}
             className="hover:underline"
-            onClick={() => setIsMenuOpen(false)}
           >
-            Contact
-          </Link>
+            contact
+          </button>
         </div>
       )}
     </header>

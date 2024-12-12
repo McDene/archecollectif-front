@@ -9,7 +9,10 @@ interface TeamMember {
 
 export default function Team({ teams }: { teams: TeamMember[] }) {
   return (
-    <section className="bg-gray-100 pt-5 md:pt-12 py-20 md:pb-36 relative">
+    <section
+      id="team"
+      className="bg-gray-100 pt-10 md:pt-12 py-20 md:pb-36 relative"
+    >
       <h2 className="text-[6rem] md:text-[14rem] lg:text-[18rem] text-center text-myblue px-4 font-avenirBlack relative z-10 ">
         équipe
       </h2>
@@ -20,7 +23,7 @@ export default function Team({ teams }: { teams: TeamMember[] }) {
           {teams.slice(0, 2).map((member) => (
             <div
               key={member.id}
-              className="relative w-52 h-52 lg:w-72 lg:h-72 rounded-full overflow-hidden flex items-center justify-center shadow-xl group border-4 border-myblue"
+              className="relative w-52 h-52 lg:w-[18.5rem] lg:h-[18.5rem] rounded-full overflow-hidden flex items-center justify-center shadow-xl group border-4 border-myblue"
             >
               <Image
                 src={member.imageUrl}
@@ -45,7 +48,7 @@ export default function Team({ teams }: { teams: TeamMember[] }) {
           {teams.slice(2, 5).map((member) => (
             <div
               key={member.id}
-              className="relative w-52 h-52 lg:w-72 lg:h-72 rounded-full overflow-hidden flex items-center justify-center shadow-xl group border-4 border-myblue"
+              className="relative w-52 h-52 lg:w-[18.5rem] lg:h-[18.5rem] rounded-full overflow-hidden flex items-center justify-center shadow-xl group border-4 border-myblue"
             >
               <Image
                 src={member.imageUrl}
@@ -70,7 +73,7 @@ export default function Team({ teams }: { teams: TeamMember[] }) {
           {teams.slice(5, 7).map((member) => (
             <div
               key={member.id}
-              className="relative w-52 h-52 lg:w-72 lg:h-72 rounded-full overflow-hidden flex items-center justify-center shadow-xl group border-4 border-myblue"
+              className="relative w-52 h-52 lg:w-[18.5rem] lg:h-[18.5rem] rounded-full overflow-hidden flex items-center justify-center shadow-xl group border-4 border-myblue"
             >
               <Image
                 src={member.imageUrl}
