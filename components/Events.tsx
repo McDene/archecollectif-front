@@ -14,6 +14,7 @@ interface Event {
   tag: string; // "à venir", "press", "passé"
   linkName: string; // Nom du lien
   linkUrl: string; // URL du lien
+  eventContent: string; // "PDF" ou "URL"
 }
 
 interface EventsProps {
@@ -32,7 +33,7 @@ export default function Events({ events }: EventsProps) {
       className="bg-gradient-to-b from-gray-100 to-gray-100 py-20 md:py-28 lg:py-36"
     >
       <div className="max-w-6xl 2xl:max-w-7xl mx-auto px-4">
-        <h2 className="text-6xl  md:text-7xl lg:text-9xl font-avenirBlack text-myred pb-12 lg:pb-24">
+        <h2 className="text-6xl md:text-7xl lg:text-9xl font-avenirBlack text-myred pb-12 lg:pb-24">
           actualités
         </h2>
         {/* Liens */}
@@ -106,7 +107,9 @@ export default function Events({ events }: EventsProps) {
                     rel="noopener noreferrer"
                     className="text-myred hover:underline text-lg font-semibold"
                   >
-                    {filteredEvents[activeEventIndex].linkName}
+                    {filteredEvents[activeEventIndex].eventContent === "PDF"
+                      ? "Ouvrir le PDF"
+                      : filteredEvents[activeEventIndex].linkName}
                   </a>
                 )}
             </div>

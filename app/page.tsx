@@ -37,7 +37,9 @@ interface EventData {
   Image: { url: string };
   actualites_tag: { Name: string };
   Nom_lien: string;
-  Lien: string;
+  Lien: string | null;
+  PDF?: { url: string } | null; // Propriété PDF ajoutée
+  Event_content: string;
 }
 
 export default async function HomePage() {
@@ -90,7 +92,8 @@ export default async function HomePage() {
         imageUrl: event.Image?.url || "",
         tag: event.actualites_tag?.Name?.trim().toLowerCase() || "",
         linkName: event.Nom_lien || "",
-        linkUrl: event.Lien || "",
+        linkUrl: event.Lien || event.PDF?.url || "", // Prend l'URL du PDF si elle existe
+        eventContent: event.Event_content || "", // Détermine le type de contenu
       })) || [];
 
     const videoUrl = heroData?.data?.Video?.url || "";
