@@ -10,7 +10,7 @@ export default function Footer() {
           {/* Logo */}
           <div className="flex-shrink-0 flex items-stretch">
             <Image
-              src="/images/LOGOBlanc.png"
+              src="/images/LogoBlanc.png"
               alt="Logo"
               width={140} // La largeur peut être ajustée
               height={0} // Hauteur auto-adaptée au contenu
