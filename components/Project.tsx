@@ -112,10 +112,10 @@ const ProjectsSection: FC<ProjectsSectionProps> = ({ projects }) => {
   return (
     <section
       id="projets"
-      className="bg-gradient-to-b from-gray-100 to-gray-100 pb-20 pt-32 md:pb-36 md:pt-56 relative"
+      className="bg-gradient-to-b from-gray-100 to-gray-100 pb-20 pt-32 md:pb-36 md:pt-36 relative"
     >
       <div className="max-w-6xl 2xl:max-w-7xl mx-auto px-4 relative -mt-14">
-        <h1 className="block lg:hidden text-7xl font-avenirBlack text-myblue pb-12">
+        <h1 className="text-6xl md:text-7xl lg:text-9xl font-avenirBlack text-myred pb-12 lg:pb-24">
           projets
         </h1>
         <div className="flex flex-col lg:grid lg:grid-cols-4 gap-8 ">
@@ -153,9 +153,7 @@ const ProjectsSection: FC<ProjectsSectionProps> = ({ projects }) => {
                     }
                   }}
                 >
-                  <option value="summary">
-                    {summaryTitle || "Résumé de l'année"}
-                  </option>
+                  <option value="summary">{"Résumé de l'année"}</option>
                   {filteredProjects.map((project) => (
                     <option key={project.id} value={project.id}>
                       {project.title}
@@ -214,7 +212,7 @@ const ProjectsSection: FC<ProjectsSectionProps> = ({ projects }) => {
                       }`}
                       onClick={() => setSelectedProject(null)}
                     >
-                      {summaryTitle || "Résumé de l'année"}
+                      {"Résumé de l'année"}
                     </button>
                   </li>
                   {filteredProjects.map((project) => (
@@ -241,7 +239,7 @@ const ProjectsSection: FC<ProjectsSectionProps> = ({ projects }) => {
             {/* PDF download link */}
             {selectedProject !== null && projectPDF && projectNamePDF && (
               <div className="flex flex-col mt-6">
-                <p className="text-gray-400 pb-4 text-sm">{projectNamePDF}</p>
+                <p className="text-myred pb-4 text-sm">{projectNamePDF}</p>
                 <a
                   href={projectPDF}
                   download
@@ -276,7 +274,6 @@ const ProjectsSection: FC<ProjectsSectionProps> = ({ projects }) => {
                 grabCursor
                 centeredSlides
                 slidesPerView={1}
-                effect="coverflow"
                 loop={projectImages.length > 1}
                 pagination={{ clickable: true, el: ".custom-pagination" }}
                 autoplay={{ delay: 5000, disableOnInteraction: false }}

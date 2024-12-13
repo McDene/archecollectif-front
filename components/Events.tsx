@@ -38,7 +38,7 @@ export default function Events({ events }: EventsProps) {
         </h2>
         {/* Liens */}
         <div className="flex space-x-8 mb-12 md:mb-20 text-2xl">
-          {["à venir", "press", "passé"].map((tag) => (
+          {["à venir", "publications"].map((tag) => (
             <button
               key={tag}
               onClick={() => {

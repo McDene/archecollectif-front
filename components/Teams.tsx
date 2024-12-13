@@ -9,21 +9,22 @@ interface TeamMember {
 
 export default function Team({ teams }: { teams: TeamMember[] }) {
   return (
-    <section
-      id="team"
-      className="bg-gray-100 pt-10 md:pt-12 py-20 md:pb-36 relative"
-    >
-      <h2 className="text-[6rem] md:text-[14rem] lg:text-[18rem] text-center text-myblue px-4 font-avenirBlack relative z-10 ">
-        équipe
-      </h2>
-      <div className="max-w-6xl 2xl:max-w-7xl mx-auto bg-myred py-20 md:py-28 rounded-3xl shadow-lg relative -mt-14 md:-mt-28 lg:-mt-40 z-0">
+    <section id="team" className="bg-gray-100">
+      <div className="max-w-6xl 2xl:max-w-7xl mx-auto bg-myblue rounded-3xl shadow-lg relative px-6 pt-6 pb-16">
+        {/* Titre */}
+        <div className="mb-10">
+          <h2 className="text-6xl md:text-7xl lg:text-9xl text-left text-myred font-avenirBlack pt-14 pb-4">
+            équipe
+          </h2>
+        </div>
+
         {/* Desktop */}
         <div className="hidden md:grid grid-rows-3 grid-cols-3 gap-10 place-items-center">
           {/* Première ligne : OOX */}
           {teams.slice(0, 2).map((member) => (
             <div
               key={member.id}
-              className="relative w-52 h-52 lg:w-[18.5rem] lg:h-[18.5rem] rounded-full overflow-hidden flex items-center justify-center shadow-xl group border-4 border-myblue"
+              className="relative w-52 h-52 lg:w-[18.5rem] lg:h-[18.5rem] rounded-full overflow-hidden flex items-center justify-center shadow-xl group border-4 border-gray-100"
             >
               <Image
                 src={member.imageUrl}
@@ -33,7 +34,7 @@ export default function Team({ teams }: { teams: TeamMember[] }) {
                 height={288}
                 unoptimized
               />
-              <div className="absolute inset-0 bg-myblue bg-opacity-80 rounded-full flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <div className="absolute inset-0 bg-gray-100 bg-opacity-80 rounded-full flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                 <h3 className="text-lg font-avenirBlack text-gray-900 mb-2">
                   {member.name}
                 </h3>
@@ -48,7 +49,7 @@ export default function Team({ teams }: { teams: TeamMember[] }) {
           {teams.slice(2, 5).map((member) => (
             <div
               key={member.id}
-              className="relative w-52 h-52 lg:w-[18.5rem] lg:h-[18.5rem] rounded-full overflow-hidden flex items-center justify-center shadow-xl group border-4 border-myblue"
+              className="relative w-52 h-52 lg:w-[18.5rem] lg:h-[18.5rem] rounded-full overflow-hidden flex items-center justify-center shadow-xl group border-4 border-gray-100"
             >
               <Image
                 src={member.imageUrl}
@@ -58,7 +59,7 @@ export default function Team({ teams }: { teams: TeamMember[] }) {
                 height={288}
                 unoptimized
               />
-              <div className="absolute inset-0 bg-myblue bg-opacity-80 rounded-full flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <div className="absolute inset-0 bg-gray-100 bg-opacity-80 rounded-full flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                 <h3 className="text-lg font-avenirBlack text-gray-900 mb-2">
                   {member.name}
                 </h3>
@@ -73,7 +74,7 @@ export default function Team({ teams }: { teams: TeamMember[] }) {
           {teams.slice(5, 7).map((member) => (
             <div
               key={member.id}
-              className="relative w-52 h-52 lg:w-[18.5rem] lg:h-[18.5rem] rounded-full overflow-hidden flex items-center justify-center shadow-xl group border-4 border-myblue"
+              className="relative w-52 h-52 lg:w-[18.5rem] lg:h-[18.5rem] rounded-full overflow-hidden flex items-center justify-center shadow-xl group border-4 border-gray-100"
             >
               <Image
                 src={member.imageUrl}
@@ -83,7 +84,7 @@ export default function Team({ teams }: { teams: TeamMember[] }) {
                 height={288}
                 unoptimized
               />
-              <div className="absolute inset-0 bg-myblue bg-opacity-80 rounded-full flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <div className="absolute inset-0 bg-gray-100 bg-opacity-80 rounded-full flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                 <h3 className="text-lg font-avenirBlack text-gray-900 mb-2">
                   {member.name}
                 </h3>
@@ -100,7 +101,7 @@ export default function Team({ teams }: { teams: TeamMember[] }) {
           {teams.map((member) => (
             <div
               key={member.id}
-              className="relative w-72 h-72 rounded-full overflow-hidden flex items-center justify-center shadow-lg group border-4 border-myblue"
+              className="relative w-72 h-72 rounded-full overflow-hidden flex items-center justify-center shadow-lg group border-4 border-gray-100"
             >
               <Image
                 src={member.imageUrl}
@@ -110,7 +111,7 @@ export default function Team({ teams }: { teams: TeamMember[] }) {
                 height={288}
                 unoptimized
               />
-              <div className="absolute inset-0 bg-myblue bg-opacity-80 rounded-full flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <div className="absolute inset-0 bg-gray-100 bg-opacity-80 rounded-full flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                 <h3 className="text-lg font-avenirBlack text-gray-900 mb-2">
                   {member.name}
                 </h3>
