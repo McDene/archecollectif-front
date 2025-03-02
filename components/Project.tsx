@@ -31,7 +31,9 @@ const ProjectsSection: FC<ProjectsSectionProps> = ({ projects }) => {
 
   const uniqueYears = Array.from(
     new Set(projects.map((project) => project.date.split("-")[0]))
-  );
+  ).sort((a, b) => parseInt(b, 10) - parseInt(a, 10)); // Trie en ordre décroissant
+
+  // console.log("Années extraites et triées :", uniqueYears);
 
   // Calculer les années visibles (3 éléments avec celui du milieu sélectionné)
   const visibleYears = [
@@ -43,9 +45,11 @@ const ProjectsSection: FC<ProjectsSectionProps> = ({ projects }) => {
   ];
 
   const selectedYear = uniqueYears[selectedYearIndex];
-  const filteredProjects = projects.filter((project) =>
-    project.date.startsWith(selectedYear)
-  );
+  const filteredProjects = projects
+    .filter((project) => project.date.startsWith(selectedYear))
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
+  console.log(`Projets triés pour l'année ${selectedYear} :`, filteredProjects);
 
   const loadSummaryData = async (year: string) => {
     setLoading(true);
@@ -265,7 +269,7 @@ const ProjectsSection: FC<ProjectsSectionProps> = ({ projects }) => {
                 <img
                   src={summaryImage}
                   alt={summaryTitle || "Résumé de l'année"}
-                  className="w-full h-[500px] md:h-[700px] object-cover  rounded-3xl shadow-lg"
+                  className="w-full h-[500px] md:h-[700px] object-cover  rounded-3xl "
                 />
               </div>
             )}
@@ -285,7 +289,7 @@ const ProjectsSection: FC<ProjectsSectionProps> = ({ projects }) => {
                     <img
                       src={image}
                       alt={`Image ${index + 1}`}
-                      className="w-full h-full object-cover rounded-3xl shadow-lg"
+                      className="w-full h-full object-cover rounded-3xl "
                     />
                   </SwiperSlide>
                 ))}

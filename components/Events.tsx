@@ -90,7 +90,7 @@ export default function Events({ events }: EventsProps) {
                   <Image
                     src={event.imageUrl}
                     alt={`Event ${event.id}`}
-                    className="w-full h-full object-cover rounded-3xl shadow-lg"
+                    className="w-full h-full object-cover rounded-3xl"
                     width={800}
                     height={600}
                   />
