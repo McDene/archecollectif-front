@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { AiFillInstagram, AiFillLinkedin, AiFillYoutube } from "react-icons/ai";
+import { AiFillInstagram, AiFillLinkedin } from "react-icons/ai";
 
 export default function Footer() {
   return (
@@ -64,15 +64,6 @@ export default function Footer() {
               className="hover:text-myred hover:scale-110 transition-all duration-200"
             >
               <AiFillInstagram className="text-2xl md:text-3xl" />
-            </a>
-            <a
-              href="#"
-              target="_blank"
-              aria-label="YouTube"
-              title="Suivez-nous sur YouTube"
-              className="hover:text-myred hover:scale-110 transition-all duration-200"
-            >
-              <AiFillYoutube className="text-2xl md:text-3xl" />
             </a>
           </div>
         </nav>

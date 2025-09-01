@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, useState, useEffect } from "react";
+import { FC, useState, useEffect, useMemo } from "react";
 import { AiFillCaretDown, AiFillCaretUp, AiFillFilePdf } from "react-icons/ai";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { EffectCoverflow, Pagination, Autoplay } from "swiper/modules";
@@ -19,9 +19,15 @@ interface ProjectsSectionProps {
   projects: Project[];
 }
 
+// ----- Helpers -----
+const yearOf = (raw: string) => {
+  const m = String(raw || "").match(/\b(19|20)\d{2}\b/);
+  return m ? m[0] : "Inconnu";
+};
+
 const ProjectsSection: FC<ProjectsSectionProps> = ({ projects }) => {
   const [selectedYearIndex, setSelectedYearIndex] = useState(0);
-  const [selectedProject, setSelectedProject] = useState<number | null>(null); // Active project ID or null for summary
+  const [selectedProject, setSelectedProject] = useState<number | null>(null); // null = résumé
   const [projectImages, setProjectImages] = useState<string[]>([]);
   const [summaryImage, setSummaryImage] = useState<string | null>(null);
   const [summaryTitle, setSummaryTitle] = useState<string | null>(null);
@@ -29,29 +35,52 @@ const ProjectsSection: FC<ProjectsSectionProps> = ({ projects }) => {
   const [projectNamePDF, setProjectNamePDF] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const uniqueYears = Array.from(
-    new Set(projects.map((project) => project.date.split("-")[0]))
-  ).sort((a, b) => parseInt(b, 10) - parseInt(a, 10)); // Trie en ordre décroissant
+  // Années uniques (tri décroissant), robustes
+  const uniqueYears = useMemo(
+    () =>
+      Array.from(new Set(projects.map((p) => yearOf(p.date))))
+        .filter((y) => y !== "Inconnu")
+        .sort((a, b) => parseInt(b) - parseInt(a)),
+    [projects]
+  );
 
-  // console.log("Années extraites et triées :", uniqueYears);
-
-  // Calculer les années visibles (3 éléments avec celui du milieu sélectionné)
-  const visibleYears = [
-    uniqueYears[
-      (selectedYearIndex - 1 + uniqueYears.length) % uniqueYears.length
-    ],
-    uniqueYears[selectedYearIndex],
-    uniqueYears[(selectedYearIndex + 1) % uniqueYears.length],
-  ];
+  // Fall-back si pas d’année valide
+  useEffect(() => {
+    if (uniqueYears.length === 0) {
+      setSelectedYearIndex(0);
+    } else if (selectedYearIndex >= uniqueYears.length) {
+      setSelectedYearIndex(0);
+    }
+  }, [uniqueYears, selectedYearIndex]);
 
   const selectedYear = uniqueYears[selectedYearIndex];
-  const filteredProjects = projects
-    .filter((project) => project.date.startsWith(selectedYear))
-    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
-  console.log(`Projets triés pour l'année ${selectedYear} :`, filteredProjects);
+  // 3 années visibles (au-dessus / actuelle / au-dessous)
+  const visibleYears = useMemo(() => {
+    if (!uniqueYears.length) return [];
+    return [
+      uniqueYears[
+        (selectedYearIndex - 1 + uniqueYears.length) % uniqueYears.length
+      ],
+      uniqueYears[selectedYearIndex],
+      uniqueYears[(selectedYearIndex + 1) % uniqueYears.length],
+    ];
+  }, [uniqueYears, selectedYearIndex]);
 
+  // Projets de l’année sélectionnée
+  const filteredProjects = useMemo(
+    () =>
+      projects
+        .filter((p) => yearOf(p.date) === selectedYear)
+        .sort(
+          (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+        ),
+    [projects, selectedYear]
+  );
+
+  // Chargement “Résumé de <year>”
   const loadSummaryData = async (year: string) => {
+    if (!year) return;
     setLoading(true);
     try {
       const data = await fetchAPI(
@@ -71,7 +100,9 @@ const ProjectsSection: FC<ProjectsSectionProps> = ({ projects }) => {
     }
   };
 
+  // Chargement d’un projet
   const loadProjectData = async (projectId: number) => {
+    if (!projectId) return;
     setLoading(true);
     try {
       const data = await fetchAPI(
@@ -96,20 +127,23 @@ const ProjectsSection: FC<ProjectsSectionProps> = ({ projects }) => {
     }
   };
 
+  // Quand l’année change → resume
   useEffect(() => {
     if (selectedYear) {
       loadSummaryData(selectedYear);
-      setSelectedProject(null); // Reset to summary on year change
+      setSelectedProject(null);
     }
   }, [selectedYear]);
 
   const handleScrollUp = () => {
+    if (!uniqueYears.length) return;
     setSelectedYearIndex(
       (prev) => (prev - 1 + uniqueYears.length) % uniqueYears.length
     );
   };
 
   const handleScrollDown = () => {
+    if (!uniqueYears.length) return;
     setSelectedYearIndex((prev) => (prev + 1) % uniqueYears.length);
   };
 
@@ -122,16 +156,17 @@ const ProjectsSection: FC<ProjectsSectionProps> = ({ projects }) => {
         <h1 className="text-6xl md:text-7xl lg:text-9xl font-avenirBlack text-myred pb-12 lg:pb-24">
           projets
         </h1>
-        <div className="flex flex-col lg:grid lg:grid-cols-4 gap-8 ">
+
+        <div className="flex flex-col lg:grid lg:grid-cols-4 gap-8">
           {/* Sidebar */}
-          <div className="col-span-1 flex flex-col justify-between ">
+          <div className="col-span-1 flex flex-col justify-between">
             <div>
-              {/* Version mobile */}
+              {/* Mobile */}
               <div className="block lg:hidden">
                 {/* Années */}
                 <select
                   className="w-full p-2 mb-4 border-2 bg-transparent border-gray-200 rounded-xl focus:outline-none"
-                  value={selectedYear}
+                  value={selectedYear || ""}
                   onChange={(e) =>
                     setSelectedYearIndex(uniqueYears.indexOf(e.target.value))
                   }
@@ -152,8 +187,9 @@ const ProjectsSection: FC<ProjectsSectionProps> = ({ projects }) => {
                     if (value === "summary") {
                       setSelectedProject(null);
                     } else {
-                      setSelectedProject(parseInt(value, 10));
-                      loadProjectData(parseInt(value, 10));
+                      const id = parseInt(value, 10);
+                      setSelectedProject(id);
+                      loadProjectData(id);
                     }
                   }}
                 >
@@ -166,17 +202,25 @@ const ProjectsSection: FC<ProjectsSectionProps> = ({ projects }) => {
                 </select>
               </div>
 
-              {/* Version desktop */}
-              <div className="hidden lg:block ">
+              {/* Desktop */}
+              <div className="hidden lg:block">
                 <div className="flex items-center pb-3">
                   <div className="flex flex-col">
-                    <button className="mb-3" onClick={handleScrollUp}>
+                    <button
+                      className="mb-3"
+                      onClick={handleScrollUp}
+                      aria-label="Année précédente"
+                    >
                       <AiFillCaretUp
                         className="text-myred hover:text-gray-400"
                         size={20}
                       />
                     </button>
-                    <button className="mb-1" onClick={handleScrollDown}>
+                    <button
+                      className="mb-1"
+                      onClick={handleScrollDown}
+                      aria-label="Année suivante"
+                    >
                       <AiFillCaretDown
                         className="text-myred hover:text-gray-400"
                         size={20}
@@ -203,8 +247,6 @@ const ProjectsSection: FC<ProjectsSectionProps> = ({ projects }) => {
                     ))}
                   </ul>
                 </div>
-
-                {/* <div className="block h-[2px] w-full bg-myblue my-6" /> */}
 
                 <ul className="space-y-2">
                   <li>
@@ -249,7 +291,7 @@ const ProjectsSection: FC<ProjectsSectionProps> = ({ projects }) => {
                   download
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center text-sm space-x-2 text-myred hover:underline "
+                  className="flex items-center text-sm space-x-2 text-myred hover:underline"
                   aria-label={`Télécharger le PDF : ${projectNamePDF}`}
                 >
                   <span>Lire le PDF</span>
@@ -262,23 +304,27 @@ const ProjectsSection: FC<ProjectsSectionProps> = ({ projects }) => {
           {/* Content */}
           <div className="col-span-3">
             {loading && (
-              <div className="text-center h-[500px] md:h-[700px] bg-gray-200 rounded-3xl flex items-center justify-center"></div>
+              <div className="text-center h-[500px] md:h-[700px] bg-gray-200 rounded-3xl flex items-center justify-center">
+                {/* skeleton simple */}
+              </div>
             )}
+
             {!loading && selectedProject === null && summaryImage && (
               <div className="mb-8">
                 <img
                   src={summaryImage}
                   alt={summaryTitle || "Résumé de l'année"}
-                  className="w-full h-[500px] md:h-[700px] object-cover  rounded-3xl "
+                  className="w-full h-[500px] md:h-[700px] object-cover rounded-3xl"
                 />
               </div>
             )}
+
             {!loading && selectedProject !== null && (
               <Swiper
                 grabCursor
                 centeredSlides
                 slidesPerView={1}
-                loop={projectImages.length > 1}
+                loop={(projectImages?.length || 0) > 1}
                 pagination={{ clickable: true, el: ".custom-pagination" }}
                 autoplay={{ delay: 5000, disableOnInteraction: false }}
                 modules={[EffectCoverflow, Pagination, Autoplay]}
@@ -289,7 +335,7 @@ const ProjectsSection: FC<ProjectsSectionProps> = ({ projects }) => {
                     <img
                       src={image}
                       alt={`Image ${index + 1}`}
-                      className="w-full h-full object-cover rounded-3xl "
+                      className="w-full h-full object-cover rounded-3xl"
                     />
                   </SwiperSlide>
                 ))}

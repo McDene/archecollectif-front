@@ -22,7 +22,7 @@ interface EventsProps {
 }
 
 export default function Events({ events }: EventsProps) {
-  const [activeTag, setActiveTag] = useState("à venir");
+  const [activeTag, setActiveTag] = useState("en cours");
   const filteredEvents = events.filter((event) => event.tag === activeTag);
 
   const [activeEventIndex, setActiveEventIndex] = useState(0);
@@ -38,7 +38,7 @@ export default function Events({ events }: EventsProps) {
         </h2>
         {/* Liens */}
         <div className="flex space-x-8 mb-12 md:mb-20 text-2xl">
-          {["à venir", "publications"].map((tag) => (
+          {["en cours", "publications"].map((tag) => (
             <button
               key={tag}
               onClick={() => {

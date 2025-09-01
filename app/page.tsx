@@ -1,7 +1,7 @@
 import Hero from "../components/Hero";
 import Header from "../components/Header";
 import About from "../components/About";
-import Project from "../components/Project";
+import Project from "../components/Project"; // reçoit les projets
 import Team from "../components/Teams";
 import Events from "../components/Events";
 import Footer from "../components/Footer";
@@ -38,62 +38,103 @@ interface EventData {
   actualites_tag: { Name: string };
   Nom_lien: string;
   Lien: string | null;
-  PDF?: { url: string } | null; // Propriété PDF ajoutée
+  PDF?: { url: string } | null;
   Event_content: string;
+}
+
+type StrapiPagination = {
+  page: number;
+  pageSize: number;
+  pageCount: number;
+  total: number;
+};
+
+type StrapiListResponse<T> = {
+  data: T[];
+  meta?: { pagination?: StrapiPagination };
+};
+
+/** Récupère TOUTES les pages de /api/projects (Strapi v4) */
+async function fetchAllProjects(baseUrl: string, pageSize = 200) {
+  let page = 1;
+  const all: ProjectData[] = [];
+
+  // boucle jusqu'à tout récupérer
+  while (true) {
+    const url =
+      `${baseUrl}/api/projects` +
+      `?pagination[page]=${page}` +
+      `&pagination[pageSize]=${pageSize}` +
+      `&sort=Date:desc` +
+      `&fields[0]=Title&fields[1]=Date`;
+
+    const res = await fetch(url, { next: { revalidate: 0 } });
+    if (!res.ok) throw new Error(`Projects fetch failed (page ${page})`);
+    const json = (await res.json()) as StrapiListResponse<ProjectData>;
+
+    const items = json?.data ?? [];
+    all.push(...items);
+
+    const pag = json?.meta?.pagination;
+    if (!pag || page >= pag.pageCount) break;
+    page += 1;
+  }
+
+  return all;
 }
 
 export default async function HomePage() {
   try {
-    const [heroData, aboutData, projectData, teamsData, eventsData]: [
+    const API = process.env.NEXT_PUBLIC_API_URL as string;
+
+    const [heroData, aboutData, allProjects, teamsData, eventsData]: [
       HeroData,
       AboutData,
-      { data: ProjectData[] },
-      { data: TeamData[] },
-      { data: EventData[] }
+      ProjectData[],
+      StrapiListResponse<TeamData>,
+      StrapiListResponse<EventData>
     ] = await Promise.all([
-      fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/Video?populate=Video`, {
+      fetch(`${API}/api/Video?populate=Video`, {
         next: { revalidate: 0 },
-      }).then((res) => res.json()),
-      fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/About`, {
+      }).then((r) => r.json()),
+      fetch(`${API}/api/About`, { next: { revalidate: 0 } }).then((r) =>
+        r.json()
+      ),
+      fetchAllProjects(API, 200), // ← récupère toutes les pages
+      fetch(`${API}/api/teams?populate=Image`, {
         next: { revalidate: 0 },
-      }).then((res) => res.json()),
-      fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/projects`, {
+      }).then((r) => r.json()),
+      fetch(`${API}/api/actualties?populate=*`, {
         next: { revalidate: 0 },
-      }).then((res) => res.json()),
-      fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/teams?populate=Image`, {
-        next: { revalidate: 0 },
-      }).then((res) => res.json()),
-      fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/actualties?populate=*`, {
-        next: { revalidate: 0 },
-      }).then((res) => res.json()),
+      }).then((r) => r.json()),
     ]);
 
-    // Transformation des données des projets
+    // Transformation des projets
     const projects =
-      projectData?.data.map((project) => ({
+      (allProjects ?? []).map((project) => ({
         id: project.id,
         title: project.Title,
         date: project.Date,
       })) || [];
 
-    // Transformation des données des équipes
+    // Transformation des équipes
     const teams =
-      teamsData?.data.map((team) => ({
+      (teamsData?.data ?? []).map((team) => ({
         id: team.id,
         name: team.Name,
         content: team.Content,
         imageUrl: team.Image?.url || "",
       })) || [];
 
-    // Transformation des données des événements
+    // Transformation des événements
     const events =
-      eventsData?.data.map((event) => ({
+      (eventsData?.data ?? []).map((event) => ({
         id: event.id,
         imageUrl: event.Image?.url || "",
         tag: event.actualites_tag?.Name?.trim().toLowerCase() || "",
         linkName: event.Nom_lien || "",
-        linkUrl: event.Lien || event.PDF?.url || "", // Prend l'URL du PDF si elle existe
-        eventContent: event.Event_content || "", // Détermine le type de contenu
+        linkUrl: event.Lien || event.PDF?.url || "",
+        eventContent: event.Event_content || "",
       })) || [];
 
     const videoUrl = heroData?.data?.Video?.url || "";
