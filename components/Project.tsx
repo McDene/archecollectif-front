@@ -8,6 +8,7 @@ import "swiper/css";
 import "swiper/css/effect-coverflow";
 import "swiper/css/pagination";
 import { fetchAPI } from "../lib/fetchAPI";
+import { toAbsoluteUrl } from "../lib/media";
 
 interface Project {
   id: number;
@@ -86,7 +87,7 @@ const ProjectsSection: FC<ProjectsSectionProps> = ({ projects }) => {
       const data = await fetchAPI(
         `/api/summary-projects?filters[Title][$eq]=Résumé de ${year}&populate=Image`
       );
-      const imageUrl = data?.data?.[0]?.Image?.url || null;
+      const imageUrl = toAbsoluteUrl(data?.data?.[0]?.Image?.url) || null;
       const title = data?.data?.[0]?.Title || null;
 
       setSummaryImage(imageUrl);
@@ -110,8 +111,10 @@ const ProjectsSection: FC<ProjectsSectionProps> = ({ projects }) => {
       );
 
       const images =
-        data?.data?.[0]?.Image?.map((img: { url: string }) => img.url) || [];
-      const pdf = data?.data?.[0]?.PDF?.url || null;
+        data?.data?.[0]?.Image?.map((img: { url: string }) =>
+          toAbsoluteUrl(img.url)
+        ) || [];
+      const pdf = toAbsoluteUrl(data?.data?.[0]?.PDF?.url) || null;
       const pdfName = data?.data?.[0]?.Descriptif_projet || null;
 
       setProjectImages(images);

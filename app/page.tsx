@@ -5,6 +5,7 @@ import Project from "../components/Project"; // reçoit les projets
 import Team from "../components/Teams";
 import Events from "../components/Events";
 import Footer from "../components/Footer";
+import { toAbsoluteUrl } from "../lib/media";
 
 interface HeroData {
   data: {
@@ -123,21 +124,21 @@ export default async function HomePage() {
         id: team.id,
         name: team.Name,
         content: team.Content,
-        imageUrl: team.Image?.url || "",
+        imageUrl: toAbsoluteUrl(team.Image?.url),
       })) || [];
 
     // Transformation des événements
     const events =
       (eventsData?.data ?? []).map((event) => ({
         id: event.id,
-        imageUrl: event.Image?.url || "",
+        imageUrl: toAbsoluteUrl(event.Image?.url),
         tag: event.actualites_tag?.Name?.trim().toLowerCase() || "",
         linkName: event.Nom_lien || "",
-        linkUrl: event.Lien || event.PDF?.url || "",
+        linkUrl: event.Lien || toAbsoluteUrl(event.PDF?.url) || "",
         eventContent: event.Event_content || "",
       })) || [];
 
-    const videoUrl = heroData?.data?.Video?.url || "";
+    const videoUrl = toAbsoluteUrl(heroData?.data?.Video?.url) || "";
     const titleAbout = aboutData?.data?.Title || "Default Title";
     const textAbout = aboutData?.data?.Text || "Default Text";
 

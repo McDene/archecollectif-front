@@ -11,7 +11,7 @@ const nextConfig = {
       },
       {
         protocol: "https",
-        hostname: "https://admin.larchcollectif.ch",
+        hostname: "admin.larchcollectif.ch",
         pathname: "/uploads/**",
       },
     ],
