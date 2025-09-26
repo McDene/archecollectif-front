@@ -52,3 +52,29 @@ body {
 .custom-pagination .swiper-pagination-bullet-active {
   background-color: #223c60;
 }
+
+/* Swiper overrides scoped by the helper class `to-myblue` */
+.to-myblue {
+  /* smaller arrows and color */
+  --swiper-navigation-size: 18px;
+  --swiper-navigation-color: #06bdc5; /* tailwind: myblue */
+  /* bullets color */
+  --swiper-pagination-color: #06bdc5; /* tailwind: myblue */
+}
+
+/* Ensure bullets are small dots and visible */
+.to-myblue .swiper-pagination-bullet {
+  width: 7px;
+  height: 7px;
+  background: rgba(6, 189, 197, 0.4);
+  opacity: 1;
+}
+
+.to-myblue .swiper-pagination-bullet-active {
+  background: #06bdc5;
+}
+
+/* Slightly tone down disabled arrows */
+.to-myblue .swiper-button-disabled {
+  opacity: 0.35 !important;
+}

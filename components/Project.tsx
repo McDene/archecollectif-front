@@ -3,10 +3,11 @@
 import { FC, useState, useEffect, useMemo } from "react";
 import { AiFillCaretDown, AiFillCaretUp, AiFillFilePdf } from "react-icons/ai";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { EffectCoverflow, Pagination, Autoplay } from "swiper/modules";
+import { EffectCoverflow, Pagination, Autoplay, Navigation } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/effect-coverflow";
 import "swiper/css/pagination";
+import "swiper/css/navigation";
 import { fetchAPI } from "../lib/fetchAPI";
 import { toAbsoluteUrl } from "../lib/media";
 
@@ -322,7 +323,7 @@ const ProjectsSection: FC<ProjectsSectionProps> = ({ projects }) => {
                 <img
                   src={summaryImage}
                   alt={summaryTitle || "Résumé de l'année"}
-                  className="w-full h-[500px] md:h-[700px] object-cover rounded-3xl"
+                  className="w-full h-[500px] md:h-[700px] object-contain rounded-3xl bg-gray-200"
                 />
               </div>
             )}
@@ -333,17 +334,18 @@ const ProjectsSection: FC<ProjectsSectionProps> = ({ projects }) => {
                 centeredSlides
                 slidesPerView={1}
                 loop={(projectImages?.length || 0) > 1}
-                pagination={{ clickable: true, el: ".custom-pagination" }}
+                pagination={{ clickable: true }}
+                navigation
                 autoplay={{ delay: 5000, disableOnInteraction: false }}
-                modules={[EffectCoverflow, Pagination, Autoplay]}
-                className="w-full h-[500px] md:h-[700px]"
+                modules={[EffectCoverflow, Pagination, Autoplay, Navigation]}
+                className="w-full h-[500px] md:h-[700px] projects-swiper to-myblue"
               >
                 {projectImages.map((image, index) => (
                   <SwiperSlide key={index}>
                     <img
                       src={image}
                       alt={`Image ${index + 1}`}
-                      className="w-full h-full object-cover rounded-3xl"
+                      className="w-full h-full object-contain"
                     />
                   </SwiperSlide>
                 ))}
