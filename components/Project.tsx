@@ -56,15 +56,20 @@ const ProjectsSection: FC<ProjectsSectionProps> = ({ projects }) => {
 
   const selectedYear = uniqueYears[selectedYearIndex];
 
-  // 3 années visibles (au-dessus / actuelle / au-dessous)
+  // Années visibles (évite les doublons quand < 3 années)
   const visibleYears = useMemo(() => {
-    if (!uniqueYears.length) return [];
+    const n = uniqueYears.length;
+    if (n === 0) return [];
+    if (n === 1) return [uniqueYears[0]];
+    if (n === 2) {
+      const prev = uniqueYears[(selectedYearIndex - 1 + n) % n];
+      const curr = uniqueYears[selectedYearIndex];
+      return prev === curr ? [curr] : [prev, curr];
+    }
     return [
-      uniqueYears[
-        (selectedYearIndex - 1 + uniqueYears.length) % uniqueYears.length
-      ],
+      uniqueYears[(selectedYearIndex - 1 + n) % n],
       uniqueYears[selectedYearIndex],
-      uniqueYears[(selectedYearIndex + 1) % uniqueYears.length],
+      uniqueYears[(selectedYearIndex + 1) % n],
     ];
   }, [uniqueYears, selectedYearIndex]);
 
@@ -232,8 +237,8 @@ const ProjectsSection: FC<ProjectsSectionProps> = ({ projects }) => {
                   </div>
 
                   <ul className="space-y-2 flex flex-col justify-center items-center h-36">
-                    {visibleYears.map((year) => (
-                      <li key={year}>
+                    {visibleYears.map((year, i) => (
+                      <li key={`${year}-${i}`}>
                         <button
                           className={`w-full px-6 rounded-lg ${
                             year === selectedYear
