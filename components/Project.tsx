@@ -1,9 +1,14 @@
 "use client";
 
 import { FC, useState, useEffect, useMemo } from "react";
-import { AiFillCaretDown, AiFillCaretUp, AiFillFilePdf } from "react-icons/ai";
+import { AiFillFilePdf, AiFillCaretUp, AiFillCaretDown } from "react-icons/ai";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { EffectCoverflow, Pagination, Autoplay, Navigation } from "swiper/modules";
+import {
+  EffectCoverflow,
+  Pagination,
+  Autoplay,
+  Navigation,
+} from "swiper/modules";
 import "swiper/css";
 import "swiper/css/effect-coverflow";
 import "swiper/css/pagination";
@@ -29,10 +34,8 @@ const yearOf = (raw: string) => {
 
 const ProjectsSection: FC<ProjectsSectionProps> = ({ projects }) => {
   const [selectedYearIndex, setSelectedYearIndex] = useState(0);
-  const [selectedProject, setSelectedProject] = useState<number | null>(null); // null = résumé
+  const [selectedProject, setSelectedProject] = useState<number | null>(null);
   const [projectImages, setProjectImages] = useState<string[]>([]);
-  const [summaryImage, setSummaryImage] = useState<string | null>(null);
-  const [summaryTitle, setSummaryTitle] = useState<string | null>(null);
   const [projectPDF, setProjectPDF] = useState<string | null>(null);
   const [projectNamePDF, setProjectNamePDF] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -85,27 +88,7 @@ const ProjectsSection: FC<ProjectsSectionProps> = ({ projects }) => {
     [projects, selectedYear]
   );
 
-  // Chargement “Résumé de <year>”
-  const loadSummaryData = async (year: string) => {
-    if (!year) return;
-    setLoading(true);
-    try {
-      const data = await fetchAPI(
-        `/api/summary-projects?filters[Title][$eq]=Résumé de ${year}&populate=Image`
-      );
-      const imageUrl = toAbsoluteUrl(data?.data?.[0]?.Image?.url) || null;
-      const title = data?.data?.[0]?.Title || null;
-
-      setSummaryImage(imageUrl);
-      setSummaryTitle(title);
-    } catch (error) {
-      console.error("Error fetching summary data:", error);
-      setSummaryImage(null);
-      setSummaryTitle(null);
-    } finally {
-      setLoading(false);
-    }
-  };
+  // (Résumé annuel supprimé)
 
   // Chargement d’un projet
   const loadProjectData = async (projectId: number) => {
@@ -136,13 +119,21 @@ const ProjectsSection: FC<ProjectsSectionProps> = ({ projects }) => {
     }
   };
 
-  // Quand l’année change → resume
+  // Quand l’année change → sélectionner automatiquement le 1er projet de l’année
   useEffect(() => {
-    if (selectedYear) {
-      loadSummaryData(selectedYear);
+    if (!selectedYear) return;
+    if (filteredProjects.length > 0) {
+      const firstId = filteredProjects[0].id;
+      setSelectedProject(firstId);
+      loadProjectData(firstId);
+    } else {
       setSelectedProject(null);
+      setProjectImages([]);
+      setProjectPDF(null);
+      setProjectNamePDF(null);
     }
-  }, [selectedYear]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedYear, filteredProjects.length]);
 
   const handleScrollUp = () => {
     if (!uniqueYears.length) return;
@@ -165,194 +156,127 @@ const ProjectsSection: FC<ProjectsSectionProps> = ({ projects }) => {
         <h1 className="text-6xl md:text-7xl lg:text-9xl font-avenirBlack text-myred pb-12 lg:pb-24">
           projets
         </h1>
+        {/* Barre de contrôle: sélecteur d'année (gauche avec flèches) + PDF (à gauche, à côté) */}
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-start gap-4 md:gap-6 pb-6 md:pb-10">
+          <div className="flex items-center gap-3">
+            {/* Mobile: simple select */}
+            <div className="block lg:hidden">
+              <label htmlFor="yearSelect" className="sr-only">
+                Sélectionner l&apos;année
+              </label>
+              <select
+                id="yearSelect"
+                className="select select-bordered select-sm rounded-full bg-transparent border-gray-300 text-gray-700 focus:outline-none focus:border-myred"
+                value={selectedYear || ""}
+                onChange={(e) =>
+                  setSelectedYearIndex(uniqueYears.indexOf(e.target.value))
+                }
+              >
+                {uniqueYears.map((year) => (
+                  <option key={year} value={year}>
+                    {year}
+                  </option>
+                ))}
+              </select>
+            </div>
 
-        <div className="flex flex-col lg:grid lg:grid-cols-4 gap-8">
-          {/* Sidebar */}
-          <div className="col-span-1 flex flex-col justify-between">
-            <div>
-              {/* Mobile */}
-              <div className="block lg:hidden">
-                {/* Années */}
-                <select
-                  className="w-full p-2 mb-4 border-2 bg-transparent border-gray-200 rounded-xl focus:outline-none"
-                  value={selectedYear || ""}
-                  onChange={(e) =>
-                    setSelectedYearIndex(uniqueYears.indexOf(e.target.value))
-                  }
-                >
-                  {uniqueYears.map((year) => (
-                    <option key={year} value={year}>
-                      {year}
-                    </option>
-                  ))}
-                </select>
-
-                {/* Projets */}
-                <select
-                  className="w-full p-2 mb-4 border-2 bg-transparent border-gray-200 rounded-xl focus:outline-none"
-                  value={selectedProject || "summary"}
-                  onChange={(e) => {
-                    const value = e.target.value;
-                    if (value === "summary") {
-                      setSelectedProject(null);
-                    } else {
-                      const id = parseInt(value, 10);
-                      setSelectedProject(id);
-                      loadProjectData(id);
-                    }
-                  }}
-                >
-                  <option value="summary">{"Résumé de l'année"}</option>
-                  {filteredProjects.map((project) => (
-                    <option key={project.id} value={project.id}>
-                      {project.title}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Desktop */}
-              <div className="hidden lg:block">
-                <div className="flex items-center pb-3">
-                  <div className="flex flex-col">
-                    <button
-                      className="mb-3"
-                      onClick={handleScrollUp}
-                      aria-label="Année précédente"
-                    >
-                      <AiFillCaretUp
-                        className="text-myred hover:text-gray-400"
-                        size={20}
-                      />
-                    </button>
-                    <button
-                      className="mb-1"
-                      onClick={handleScrollDown}
-                      aria-label="Année suivante"
-                    >
-                      <AiFillCaretDown
-                        className="text-myred hover:text-gray-400"
-                        size={20}
-                      />
-                    </button>
-                  </div>
-
-                  <ul className="space-y-2 flex flex-col justify-center items-center h-36">
-                    {visibleYears.map((year, i) => (
-                      <li key={`${year}-${i}`}>
-                        <button
-                          className={`w-full px-6 rounded-lg ${
-                            year === selectedYear
-                              ? "text-myred font-avenirBlack text-4xl"
-                              : "text-gray-400 font-avenirRegular hover:underline"
-                          }`}
-                          onClick={() =>
-                            setSelectedYearIndex(uniqueYears.indexOf(year))
-                          }
-                        >
-                          {year}
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
+            {/* Desktop: flèches + années visibles */}
+            <div className="hidden lg:block">
+              <div className="flex items-center pb-1">
+                <div className="flex flex-col">
+                  <button
+                    className="mb-2"
+                    onClick={handleScrollUp}
+                    aria-label="Année précédente"
+                    type="button"
+                  >
+                    <AiFillCaretUp
+                      className="text-myred hover:text-gray-400"
+                      size={20}
+                    />
+                  </button>
+                  <button
+                    className="mb-1"
+                    onClick={handleScrollDown}
+                    aria-label="Année suivante"
+                    type="button"
+                  >
+                    <AiFillCaretDown
+                      className="text-myred hover:text-gray-400"
+                      size={20}
+                    />
+                  </button>
                 </div>
 
-                <ul className="space-y-2">
-                  <li>
-                    <button
-                      className={`text-left py-1 rounded-lg text-2xl font-avenirBlack ${
-                        selectedProject === null
-                          ? "text-myred underline"
-                          : "text-gray-400 hover:underline"
-                      }`}
-                      onClick={() => setSelectedProject(null)}
-                    >
-                      {"Résumé de l'année"}
-                    </button>
-                  </li>
-                  {filteredProjects.map((project) => (
-                    <li key={project.id}>
+                <ul className="space-y-1 flex flex-col justify-center items-center h-28">
+                  {visibleYears.map((year, i) => (
+                    <li key={`${year}-${i}`}>
                       <button
-                        className={`text-left py-1 rounded-lg text-2xl font-avenirBlack ${
-                          selectedProject === project.id
-                            ? "text-myred underline"
-                            : "text-gray-400 hover:underline"
+                        type="button"
+                        className={`w-full px-4 rounded-lg ${
+                          year === selectedYear
+                            ? "text-myred font-avenirBlack text-3xl"
+                            : "text-gray-400 font-avenirRegular hover:underline"
                         }`}
-                        onClick={() => {
-                          setSelectedProject(project.id);
-                          loadProjectData(project.id);
-                        }}
+                        onClick={() =>
+                          setSelectedYearIndex(uniqueYears.indexOf(year))
+                        }
                       >
-                        {project.title}
+                        {year}
                       </button>
                     </li>
                   ))}
                 </ul>
               </div>
             </div>
-
-            {/* PDF download link */}
-            {selectedProject !== null && projectPDF && projectNamePDF && (
-              <div className="flex flex-col mt-6">
-                <p className="text-myred pb-4 text-sm">{projectNamePDF}</p>
-                <a
-                  href={projectPDF}
-                  download
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center text-sm space-x-2 text-myred hover:underline"
-                  aria-label={`Télécharger le PDF : ${projectNamePDF}`}
-                >
-                  <span>Lire le PDF</span>
-                  <AiFillFilePdf className="text-xl" />
-                </a>
-              </div>
-            )}
           </div>
 
-          {/* Content */}
-          <div className="col-span-3">
-            {loading && (
-              <div className="text-center h-[500px] md:h-[700px] bg-gray-200 rounded-3xl flex items-center justify-center">
-                {/* skeleton simple */}
-              </div>
-            )}
-
-            {!loading && selectedProject === null && summaryImage && (
-              <div className="mb-8">
-                <img
-                  src={summaryImage}
-                  alt={summaryTitle || "Résumé de l'année"}
-                  className="w-full h-[500px] md:h-[700px] object-contain rounded-3xl bg-gray-200"
-                />
-              </div>
-            )}
-
-            {!loading && selectedProject !== null && (
-              <Swiper
-                grabCursor
-                centeredSlides
-                slidesPerView={1}
-                loop={(projectImages?.length || 0) > 1}
-                pagination={{ clickable: true }}
-                navigation
-                autoplay={{ delay: 5000, disableOnInteraction: false }}
-                modules={[EffectCoverflow, Pagination, Autoplay, Navigation]}
-                className="w-full h-[500px] md:h-[700px] projects-swiper to-myblue"
-              >
-                {projectImages.map((image, index) => (
-                  <SwiperSlide key={index}>
-                    <img
-                      src={image}
-                      alt={`Image ${index + 1}`}
-                      className="w-full h-full object-contain"
-                    />
-                  </SwiperSlide>
-                ))}
-              </Swiper>
-            )}
-          </div>
+          {selectedProject !== null && projectPDF && projectNamePDF && (
+            <a
+              href={projectPDF}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-3 md:gap-4 md:pl-6 text-myred hover:underline"
+              aria-label={`Ouvrir le PDF : ${projectNamePDF}`}
+            >
+              <span className="text-sm md:text-base">{projectNamePDF}</span>
+              <AiFillFilePdf className="text-xl" />
+            </a>
+          )}
         </div>
+      </div>
+
+      {/* Carrousel à 100% de la largeur du conteneur */}
+      <div className="max-w-6xl 2xl:max-w-7xl mx-auto px-4">
+        {loading && (
+          <div className="text-center h-[420px] md:h-[600px] flex items-center justify-center">
+            {/* skeleton simple */}
+          </div>
+        )}
+
+        {!loading && selectedProject !== null && projectImages.length > 0 && (
+          <Swiper
+            grabCursor
+            centeredSlides
+            slidesPerView={1}
+            loop={projectImages.length > 1}
+            pagination={{ clickable: true }}
+            navigation
+            autoplay={{ delay: 5000, disableOnInteraction: false }}
+            modules={[EffectCoverflow, Pagination, Autoplay, Navigation]}
+            className="w-full h-[420px] md:h-[600px] to-myblue"
+          >
+            {projectImages.map((image, index) => (
+              <SwiperSlide key={index}>
+                <img
+                  src={image}
+                  alt={`Image ${index + 1}`}
+                  className="w-full h-full object-contain"
+                />
+              </SwiperSlide>
+            ))}
+          </Swiper>
+        )}
       </div>
     </section>
   );
