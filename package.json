@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "compress:pdf": "gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/screen -dFastWebView=true -dDetectDuplicateImages=true -dDownsampleColorImages=true -dColorImageResolution=150 -dNOPAUSE -dQUIET -dBATCH -sOutputFile=out.pdf in.pdf",
+    "linearize:pdf": "qpdf --linearize in.pdf out.pdf"
   },
   "dependencies": {
     "axios": "^1.7.7",

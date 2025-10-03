@@ -1,6 +1,7 @@
 "use client";
+/* eslint-disable @next/next/no-img-element */
 
-import { FC, useState, useEffect, useMemo } from "react";
+import { FC, useState, useEffect, useMemo, useRef } from "react";
 import { AiFillFilePdf, AiFillCaretUp, AiFillCaretDown } from "react-icons/ai";
 import { Swiper, SwiperSlide } from "swiper/react";
 import {
@@ -15,6 +16,7 @@ import "swiper/css/pagination";
 import "swiper/css/navigation";
 import { fetchAPI } from "../lib/fetchAPI";
 import { toAbsoluteUrl } from "../lib/media";
+import dynamic from "next/dynamic";
 
 interface Project {
   id: number;
@@ -39,6 +41,13 @@ const ProjectsSection: FC<ProjectsSectionProps> = ({ projects }) => {
   const [projectPDF, setProjectPDF] = useState<string | null>(null);
   const [projectNamePDF, setProjectNamePDF] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [isPdfModalOpen, setPdfModalOpen] = useState(false);
+  const pdfModalRef = useRef<HTMLDialogElement | null>(null);
+
+  const PdfLightViewer = useMemo(
+    () => dynamic(() => import("./PdfLightViewer"), { ssr: false }),
+    []
+  );
 
   // Années uniques (tri décroissant), robustes
   const uniqueYears = useMemo(
@@ -147,6 +156,20 @@ const ProjectsSection: FC<ProjectsSectionProps> = ({ projects }) => {
     setSelectedYearIndex((prev) => (prev + 1) % uniqueYears.length);
   };
 
+  // Fermer le modal si la fenêtre passe sous le breakpoint lg (1024px)
+  useEffect(() => {
+    const onResize = () => {
+      if (typeof window !== "undefined" && window.innerWidth < 1024) {
+        setPdfModalOpen(false);
+        try {
+          pdfModalRef.current?.close();
+        } catch {}
+      }
+    };
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+
   return (
     <section
       id="projets"
@@ -232,16 +255,30 @@ const ProjectsSection: FC<ProjectsSectionProps> = ({ projects }) => {
           </div>
 
           {selectedProject !== null && projectPDF && projectNamePDF && (
-            <a
-              href={projectPDF}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-3 md:gap-4 md:pl-6 text-myred hover:underline"
-              aria-label={`Ouvrir le PDF : ${projectNamePDF}`}
-            >
-              <span className="text-sm md:text-base">{projectNamePDF}</span>
-              <AiFillFilePdf className="text-xl" />
-            </a>
+            <div className="flex items-center gap-4 md:pl-6">
+              <a
+                href={projectPDF}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-3 text-myred hover:underline"
+                aria-label={`Ouvrir le PDF : ${projectNamePDF}`}
+              >
+                <span className="text-sm md:text-base">{projectNamePDF}</span>
+                <AiFillFilePdf className="text-xl" />
+              </a>
+              {/^https?:\/\/res\.cloudinary\.com\//.test(projectPDF) && (
+                <button
+                  type="button"
+                  className="hidden lg:inline-flex btn btn-outline btn-xs rounded-full text-myred border-myred hover:bg-myred hover:text-white"
+                  onClick={() => {
+                    setPdfModalOpen(true);
+                    pdfModalRef.current?.showModal();
+                  }}
+                >
+                  Aperçu rapide
+                </button>
+              )}
+            </div>
           )}
         </div>
       </div>
@@ -277,6 +314,44 @@ const ProjectsSection: FC<ProjectsSectionProps> = ({ projects }) => {
             ))}
           </Swiper>
         )}
+
+        {/* Modal d'aperçu PDF (daisyUI) */}
+        <dialog
+          ref={pdfModalRef}
+          className="modal"
+          onClose={() => setPdfModalOpen(false)}
+        >
+          <div className="modal-box max-w-5xl w-11/12">
+            <div className="flex items-start justify-between mb-4">
+              <h3 className="font-avenirBlack text-lg text-myred">Aperçu PDF</h3>
+              <form method="dialog">
+                <button
+                  className="btn btn-sm btn-circle btn-ghost"
+                  aria-label="Fermer"
+                  onClick={() => setPdfModalOpen(false)}
+                >
+                  ✕
+                </button>
+              </form>
+            </div>
+            {!loading && selectedProject !== null && projectPDF && isPdfModalOpen && (
+              <PdfLightViewer pdfUrl={projectPDF} />
+            )}
+            <div className="mt-4 text-right">
+              <a
+                href={projectPDF ?? undefined}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn btn-sm btn-outline rounded-full text-myred border-myred hover:bg-myred hover:text-white"
+              >
+                Ouvrir dans un nouvel onglet
+              </a>
+            </div>
+          </div>
+          <form method="dialog" className="modal-backdrop">
+            <button aria-label="Fermer l’aperçu">close</button>
+          </form>
+        </dialog>
       </div>
     </section>
   );

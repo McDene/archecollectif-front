@@ -75,10 +75,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="fr">
-      <head>
-        <link rel="preconnect" href="https://res.cloudinary.com" crossOrigin="anonymous" />
-        <link rel="dns-prefetch" href="https://res.cloudinary.com" />
-      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${avenirBlack.variable} ${avenirRegular.variable} antialiased h-full `}
       >
