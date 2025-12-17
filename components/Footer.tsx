@@ -32,7 +32,7 @@ export default function Footer() {
               </a>
               <br />
               <a
-                href="mailto:hello@archcollectif.ch"
+                href="mailto:hello@larchcollectif.ch"
                 className="hover:underline"
               >
                 hello@larchcollectif.ch
